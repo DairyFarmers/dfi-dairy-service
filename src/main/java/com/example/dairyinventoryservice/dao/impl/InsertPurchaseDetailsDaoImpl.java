@@ -6,7 +6,6 @@ import com.example.dairyinventoryservice.dto.response.GeneralResponse;
 import com.example.dairyinventoryservice.dto.response.InsertDetailsResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.spel.ast.NullLiteral;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
@@ -103,16 +102,21 @@ public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
             }
 
             generalResponse.setData(insertPurchaseDetailsResponse.getRDataUpdated());
+
+
+
             if (Objects.equals(insertPurchaseDetailsResponse.getRDataUpdated(), "Location Details Successfully Inserted")) {
+
                 generalResponse.setMsg("Successfully data inserted");
                 generalResponse.setStatusCode(201);
                 generalResponse.setRes(true);
             } else {
                 generalResponse.setMsg("Error in inserting the location");
+
             }
 
         } catch (SQLException e) {
-
+            log.error("----------------------------------------------------------------------------------------------------{}, --------{}", insertPurchaseDetailsResponse.getRDataUpdated(), e);
             generalResponse.setData("Input valid fields");
             generalResponse.setMsg("Error in inserting the location");
         }
@@ -221,7 +225,7 @@ public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
                 generalResponse.setMsg("Error in inserting the purchase Details");
             }
         } catch (SQLException e) {
-
+            log.error(e.getMessage());
             generalResponse.setData("Input valid fields");
             generalResponse.setMsg("Error in inserting the purchase Details");
 

@@ -1,0 +1,16 @@
+com\example\dairyinventoryservice\dao\impl\DaoConstant.class
+com\example\dairyinventoryservice\service\InsertPurchaseDetailsService.class
+com\example\dairyinventoryservice\controller\DashboardController.class
+com\example\dairyinventoryservice\service\impl\InsertPurchaseDetailsServiceImpl.class
+com\example\dairyinventoryservice\dto\request\LocationDto.class
+com\example\dairyinventoryservice\dto\response\GeneralResponse.class
+com\example\dairyinventoryservice\dto\request\InsertUserDto.class
+com\example\dairyinventoryservice\dao\impl\InsertPurchaseDetailsDaoImpl.class
+com\example\dairyinventoryservice\dao\InsertPurchaseDetailsDao.class
+com\example\dairyinventoryservice\dto\request\PurchaseDetailDto.class
+com\example\dairyinventoryservice\config\DatabaseInitializer.class
+com\example\dairyinventoryservice\dto\request\UserRoleDto.class
+com\example\dairyinventoryservice\DairyInventoryServiceApplication.class
+com\example\dairyinventoryservice\dto\request\UpdateUserDto.class
+com\example\dairyinventoryservice\dto\response\InsertDetailsResponse.class
+com\example\dairyinventoryservice\dto\request\ItemDto.class

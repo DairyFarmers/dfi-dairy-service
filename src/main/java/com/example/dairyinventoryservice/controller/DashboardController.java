@@ -2,10 +2,12 @@ package com.example.dairyinventoryservice.controller;
 
 import com.example.dairyinventoryservice.dto.request.*;
 import com.example.dairyinventoryservice.dto.response.GeneralResponse;
+import com.example.dairyinventoryservice.service.GetPurchaseDetailsService;
 import com.example.dairyinventoryservice.service.InsertPurchaseDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +18,16 @@ public class DashboardController {
 
     @Autowired
     private InsertPurchaseDetailsService insertPurchaseDetails;
+
+    @Autowired
+    private GetPurchaseDetailsService getPurchaseDetails;
+
+    @GetMapping("/userDetails")
+    public ResponseEntity<GeneralResponse> userDetails(String emailId) {
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse = getPurchaseDetails.getUserDetails(emailId);
+        return new ResponseEntity<>(generalResponse, HttpStatus.OK);
+    }
 
     @PostMapping("/insertPurchase")
     public ResponseEntity<GeneralResponse> insertPurchaseDetail(PurchaseDetailDto insertPurchase){
@@ -58,5 +70,7 @@ public class DashboardController {
         generalResponse = insertPurchaseDetails.addItem(itemDto);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
+
+
 
 }

@@ -14,8 +14,8 @@ public class DatabaseInitializer {
     @Bean
     public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("schema/PurchaseDetailsInsert.sql"));
-//        populator.addScript(new ClassPathResource("functions/create_trigger1.sql"));
+        populator.addScript(new ClassPathResource("functions/PurchaseDetailsInsert.sql"));
+        populator.addScript(new ClassPathResource("functions/GetInventoryDetails.sql"));
 
         DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dataSource);
