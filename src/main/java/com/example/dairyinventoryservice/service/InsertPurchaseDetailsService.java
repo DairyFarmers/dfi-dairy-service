@@ -14,8 +14,10 @@ public interface InsertPurchaseDetailsService {
 
     public GeneralResponse addUserRole(UserRoleDto userRoleDto);
 
-    public GeneralResponse addItem(ItemDto itemDto);
+    public GeneralResponse addItem(ItemsDetailsDto itemDto);
 
     public GeneralResponse addPurchaseDetails(PurchaseDetailDto insertPurchase);
+
+    public GeneralResponse addNewSalesDetails(SalesDetailsDto insertSalesDetails);
 
 }

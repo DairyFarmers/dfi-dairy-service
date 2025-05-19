@@ -40,7 +40,13 @@ public class InsertPurchaseDetailsServiceImpl implements InsertPurchaseDetailsSe
     }
 
     @Override
-    public GeneralResponse addItem(ItemDto itemDto){
+    public GeneralResponse addItem(ItemsDetailsDto itemDto){
         return insertPurchaseDetailsDao.addItem(itemDto);
     }
+
+    @Override
+    public GeneralResponse addNewSalesDetails(SalesDetailsDto insertSalesDetails){
+        return insertPurchaseDetailsDao.addNewSalesDetails(insertSalesDetails);
+    }
+
 }

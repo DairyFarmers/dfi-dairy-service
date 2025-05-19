@@ -1,4 +1,5 @@
-package com.example.dairyinventoryservice.dto.request;
+package com.example.dairyinventoryservice.dto.response;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +10,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemDto {
+public class GetItemDetailsDto {
+    private int itemId;
     private String itemName;
     private String itemExpiryDuration;
 }

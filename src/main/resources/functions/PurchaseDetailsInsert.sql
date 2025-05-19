@@ -28,10 +28,10 @@ CREATE TABLE IF NOT EXISTS "UserDetails"
     "UserDetailId"   SERIAL PRIMARY KEY,
     "FirstName"      CHARACTER VARYING,
     "LastName"       CHARACTER VARYING,
-    "UserRoleId"     BIGINT NOT NULL ,
+    "UserRoleId"     INT               NOT NULL,
     "E-mail"         CHARACTER VARYING NOT NULL,
     "MobileNumber"   CHARACTER VARYING NOT NULL,
-    "UserLocationId" BIGINT NOT NULL ,
+    "UserLocationId" INT               NOT NULL,
     FOREIGN KEY ("UserRoleId") REFERENCES "UserRole" ("UserRoleId"),
     FOREIGN KEY ("UserLocationId") REFERENCES "LocationDetails" ("LocationId")
 );
@@ -42,13 +42,13 @@ CREATE TABLE IF NOT EXISTS "PurchaseDetails"
 (
     "PurchaseId"          VARCHAR(30) PRIMARY KEY NOT NULL,
     "CreatedDate"         TIMESTAMP WITH TIME ZONE,
-    "InsertedBy"          BIGINT NOT NULL ,
-    "PurchasePrice"       DECIMAL(10, 2),
-    "ItemId"              BIGINT NOT NULL ,
+    "InsertedBy"          INT                     NOT NULL,
+    "PurchasePrice"       NUMERIC(10, 2),
+    "ItemId"              INT                     NOT NULL,
     "ExpiryDate"          TIMESTAMP WITH TIME ZONE,
-    "SellerId"            BIGINT NOT NULL ,
-    "ItemCount"           BIGINT NOT NULL ,
-    "InventoryLocationId" BIGINT NOT NULL ,
+    "SellerId"            INT                     NOT NULL,
+    "ItemCount"           INT                     NOT NULL,
+    "InventoryLocationId" INT                     NOT NULL,
     FOREIGN KEY ("ItemId") REFERENCES "ItemsDetails" ("ItemId"),
     FOREIGN KEY ("SellerId") REFERENCES "UserDetails" ("UserDetailId"),
     FOREIGN KEY ("InsertedBy") REFERENCES "UserDetails" ("UserDetailId"),
@@ -56,10 +56,25 @@ CREATE TABLE IF NOT EXISTS "PurchaseDetails"
 );
 
 
+-- Create Sales Details
+CREATE TABLE IF NOT EXISTS "SalesDetails"
+(
+    "SalesDetailId"       VARCHAR(30) PRIMARY KEY NOT NULL,
+    "CreatedDate"         TIMESTAMP WITH TIME ZONE,
+    "SalesPrice"          NUMERIC(10, 2),
+    "ItemId"              INT,
+    "ItemCount"           INT                     NOT NULL,
+    "InventoryLocationId" INT                     NOT NULL,
+    FOREIGN KEY ("ItemId") REFERENCES "ItemsDetails" ("ItemId"),
+    FOREIGN KEY ("InventoryLocationId") REFERENCES "LocationDetails" ("LocationId")
+);
+
+
 -- 2. Create a sequence to having a auto increment number
 CREATE SEQUENCE IF NOT EXISTS purchase_id_seq;
+CREATE SEQUENCE IF NOT EXISTS sales_id_seq;
 
--- 3. Create a function to generate the custom ID
+-- 3. Create  functions to generate the custom ID
 CREATE OR REPLACE FUNCTION generate_purchase_id()
     RETURNS TRIGGER
     LANGUAGE plpgsql
@@ -74,8 +89,23 @@ AS
     END;
 ';
 
+CREATE OR REPLACE FUNCTION generate_sales_id()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+'
+    DECLARE
+        num TEXT;
+    BEGIN
+        num := LPAD(nextval(''sales_id_seq'')::TEXT, 6, ''0'');
+        NEW."SalesDetailId" := ''Sales'' || TO_CHAR(current_date, ''YYYYMM'') || num;
+        RETURN NEW;
+    END;
+';
+
 -- 4. Create a trigger to auto-fill the custom_id on insert
 DROP TRIGGER IF EXISTS trg_generate_purchase_id ON "PurchaseDetails";
+DROP TRIGGER IF EXISTS trg_generate_sales_id ON "SalesDetails";
 
 CREATE TRIGGER trg_generate_purchase_id
     BEFORE INSERT
@@ -83,10 +113,16 @@ CREATE TRIGGER trg_generate_purchase_id
     FOR EACH ROW
 EXECUTE FUNCTION generate_purchase_id();
 
+CREATE TRIGGER trg_generate_sales_id
+    BEFORE INSERT
+    ON "SalesDetails"
+    FOR EACH ROW
+EXECUTE FUNCTION generate_sales_id();
+
 -- 5. Create function
 
 -- To get the expiry date
-CREATE OR REPLACE FUNCTION get_expiry_date(pItemId BIGINT)
+CREATE OR REPLACE FUNCTION get_expiry_date(pItemId INT)
     RETURNS TABLE
             (
                 "rExpiryDate" TIMESTAMP WITH TIME ZONE
@@ -99,28 +135,29 @@ AS
         lDuration   CHARACTER VARYING;
     BEGIN
 
-    SELECT "DefaultExpiryDuration" INTO lDuration
+        SELECT "DefaultExpiryDuration"
+        INTO lDuration
         FROM "ItemsDetails"
         WHERE "ItemId" = pItemId;
 
-    IF lDuration IS NULL THEN
+        IF lDuration IS NULL THEN
             lExpiryDate := current_timestamp + INTERVAL ''1 day'';
-    RETURN QUERY SELECT lExpiryDate;
-    ELSE
-        lExpiryDate := current_timestamp + lDuration::INTERVAL;
-    RETURN QUERY SELECT lExpiryDate;
-    END IF;
+            RETURN QUERY SELECT lExpiryDate;
+        ELSE
+            lExpiryDate := current_timestamp + lDuration::INTERVAL;
+            RETURN QUERY SELECT lExpiryDate;
+        END IF;
     END;
 ';
 
 -- To insert data to the PurchaseDetails
 CREATE OR REPLACE FUNCTION insert_purchase_details(
-    pInsertedBy BIGINT,
+    pInsertedBy INT,
     pPurchasePrice DECIMAL(10, 2),
-    pItemId BIGINT,
-    pSellerId BIGINT,
-    pItemCount BIGINT,
-    plocationId BIGINT
+    pItemId INT,
+    pSellerId INT,
+    pItemCount INT,
+    plocationId INT
 )
     RETURNS TABLE
             (
@@ -245,7 +282,7 @@ AS
 CREATE OR REPLACE FUNCTION insert_user_details(
     pFirstName CHARACTER VARYING,
     pLastName CHARACTER VARYING,
-    pUserRoleId BIGINT,
+    pUserRoleId INT,
     pEmail CHARACTER VARYING,
     pMobileNumber CHARACTER VARYING
 )
@@ -332,7 +369,7 @@ CREATE OR REPLACE FUNCTION update_user_details(
     pMobileNumber CHARACTER VARYING DEFAULT NULL,
     pFirstName CHARACTER VARYING DEFAULT NULL,
     pLastName CHARACTER VARYING DEFAULT NULL,
-    pUserRoleId BIGINT DEFAULT NULL
+    pUserRoleId INT DEFAULT NULL
 )
     RETURNS TABLE
             (
@@ -342,7 +379,7 @@ CREATE OR REPLACE FUNCTION update_user_details(
 AS
 '
     DECLARE
-        lUserId BIGINT;
+        lUserId INT;
     BEGIN
         -- Validate at least one identifier
         IF (pEmail IS NULL OR TRIM(pEmail) = '''') AND (pMobileNumber IS NULL OR TRIM(pMobileNumber) = '''') THEN
@@ -378,3 +415,84 @@ AS
             RETURN QUERY SELECT "rDataUpdated";
     END;
 ';
+
+-- Create Sales Details
+CREATE OR REPLACE FUNCTION insert_sales_details(
+    pItemId INT,
+    pItemCount INT,
+    pInventoryLocationId INT,
+    pSalesPrice NUMERIC(10, 12),
+    pSellerId integer,
+    pIsb2b boolean
+)
+    RETURNS TABLE
+            (
+                "rDataUpdated" CHARACTER VARYING
+            )
+    LANGUAGE plpgsql
+AS
+'
+    DECLARE
+        lRemainingToDeduct BIGINT := pItemCount::BIGINT;
+        lPurchaseRow       RECORD;
+        lTotalItemCount    BIGINT;
+        resultMsg          CHARACTER VARYING;
+    BEGIN
+        -- Get total available item count for the product in the specified location
+        SELECT SUM("ItemCount")
+        INTO lTotalItemCount
+        FROM "PurchaseDetails"
+        WHERE "InventoryLocationId"::INT = pInventoryLocationId
+          AND "ItemId"::INT = pItemId;
+
+
+        IF lTotalItemCount IS NULL THEN
+            RAISE EXCEPTION ''Invalid input: Some required fields are null'';
+        END IF;
+
+        IF lTotalItemCount >= pItemCount::BIGINT THEN
+            -- Deduct items from PurchaseDetails (FIFO)
+            FOR lPurchaseRow IN
+                SELECT "PurchaseId",
+                       "ItemCount"
+                FROM "PurchaseDetails"
+                WHERE "InventoryLocationId" = pInventoryLocationId
+                  AND "ItemId" = pItemId
+                  AND "ItemCount" > 0
+                ORDER BY "CreatedDate"
+                LOOP
+                    RAISE NOTICE ''Before update: PurchaseId=% Count=%'', lPurchaseRow."PurchaseId", lPurchaseRow."ItemCount";
+                    EXIT WHEN lRemainingToDeduct = 0;
+
+                    IF lPurchaseRow."ItemCount" > lRemainingToDeduct THEN
+                        UPDATE "PurchaseDetails"
+                        SET "ItemCount" = "ItemCount" - lRemainingToDeduct
+                        WHERE "PurchaseId" = lPurchaseRow."PurchaseId";
+                        lRemainingToDeduct := 0;
+                    ELSE
+                        UPDATE "PurchaseDetails"
+                        SET "ItemCount" = 0
+                        WHERE "PurchaseId" = lPurchaseRow."PurchaseId";
+                        lRemainingToDeduct := lRemainingToDeduct - lPurchaseRow."ItemCount";
+                    END IF;
+                END LOOP;
+
+            -- Insert into SalesDetails
+            INSERT INTO "SalesDetails" ("CreatedDate", "SalesPrice", "ItemId", "ItemCount", "InventoryLocationId",
+                                        "SellerId", "IsB2B")
+            VALUES (CURRENT_TIMESTAMP, psalesprice, pitemid, pitemcount::BIGINT, pinventorylocationid, pSellerID,
+                    pIsB2b);
+
+            resultMsg := ''Sales Data Updated''::CHARACTER VARYING;
+        ELSE
+            resultMsg := ''Selected Item is not in the inventory''::CHARACTER VARYING;
+        END IF;
+
+        RETURN QUERY SELECT resultMsg;
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN QUERY SELECT ''Invalid Input''::CHARACTER VARYING;
+    END;
+';
+

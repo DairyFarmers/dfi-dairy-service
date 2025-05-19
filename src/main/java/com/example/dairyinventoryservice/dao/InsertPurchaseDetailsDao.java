@@ -13,8 +13,10 @@ public interface InsertPurchaseDetailsDao {
 
     public GeneralResponse addUserRole(UserRoleDto userRoleDto);
 
-    public GeneralResponse addItem(ItemDto itemDto);
+    public GeneralResponse addItem(ItemsDetailsDto itemDto);
 
     public GeneralResponse addNewPurchaseDetails(PurchaseDetailDto insertPurchase);
+
+    public GeneralResponse addNewSalesDetails(SalesDetailsDto insertSalesDetails);
 
 }

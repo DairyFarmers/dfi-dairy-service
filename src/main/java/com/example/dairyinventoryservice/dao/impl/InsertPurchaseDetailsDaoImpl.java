@@ -21,7 +21,7 @@ public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public GeneralResponse addItem(ItemDto itemDto) {
+    public GeneralResponse addItem(ItemsDetailsDto itemDto) {
 
         InsertDetailsResponse insertPurchaseDetailsResponse = new InsertDetailsResponse();
         GeneralResponse generalResponse = new GeneralResponse();
@@ -45,9 +45,9 @@ public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
                 generalResponse.setMsg("Error in inserting the new item");
             }
         } catch (SQLException e) {
-
-            generalResponse.setData(null);
-            generalResponse.setMsg("Error in inserting the new item");
+            log.error("----------------------------------------------------------------------------{}", e.getMessage());
+            generalResponse.setData("Input valid fields");
+            generalResponse.setMsg(e.getMessage());
         }
 
         return generalResponse;
@@ -79,9 +79,9 @@ public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
                 generalResponse.setMsg("Error in inserting the user role");
             }
         } catch (SQLException e) {
-
+            log.error("----------------------------------------------------------------------------{}", e.getMessage());
             generalResponse.setData("Input valid fields");
-            generalResponse.setMsg("Error in inserting the user role");
+            generalResponse.setMsg(e.getMessage());
         }
         return generalResponse;
     }
@@ -104,7 +104,6 @@ public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
             generalResponse.setData(insertPurchaseDetailsResponse.getRDataUpdated());
 
 
-
             if (Objects.equals(insertPurchaseDetailsResponse.getRDataUpdated(), "Location Details Successfully Inserted")) {
 
                 generalResponse.setMsg("Successfully data inserted");
@@ -116,9 +115,9 @@ public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
             }
 
         } catch (SQLException e) {
-            log.error("----------------------------------------------------------------------------------------------------{}, --------{}", insertPurchaseDetailsResponse.getRDataUpdated(), e);
+            log.error("----------------------------------------------------------------------------------------------------{}, --------{}", insertPurchaseDetailsResponse.getRDataUpdated(), e.getMessage());
             generalResponse.setData("Input valid fields");
-            generalResponse.setMsg("Error in inserting the location");
+            generalResponse.setMsg(e.getMessage());
         }
         return generalResponse;
     }
@@ -152,9 +151,9 @@ public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
             }
 
         } catch (SQLException e) {
-
+            log.error("----------------------------------------------------------------------------{}", e.getMessage());
             generalResponse.setData("Input valid fields");
-            generalResponse.setMsg("Error in updating the user details");
+            generalResponse.setMsg(e.getMessage());
 
         }
         return generalResponse;
@@ -190,9 +189,9 @@ public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
             }
 
         } catch (SQLException e) {
-
+            log.error("----------------------------------------------------------------------------{}", e.getMessage());
             generalResponse.setData("Input valid fields");
-            generalResponse.setMsg("Error in inserting new user");
+            generalResponse.setMsg(e.getMessage());
         }
         return generalResponse;
 
@@ -202,7 +201,8 @@ public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
     public GeneralResponse addNewPurchaseDetails(PurchaseDetailDto insertPurchase) {
         InsertDetailsResponse insertPurchaseDetailsResponse = new InsertDetailsResponse();
         GeneralResponse generalResponse = new GeneralResponse();
-        try (Connection connection = DataSourceUtils.getConnection(Objects.requireNonNull(jdbcTemplate.getDataSource())); CallableStatement callableStatement = connection.prepareCall(DaoConstant.INSERT_PURCHASE)) {
+        try (Connection connection = DataSourceUtils.getConnection(Objects.requireNonNull(jdbcTemplate.getDataSource()));
+             CallableStatement callableStatement = connection.prepareCall(DaoConstant.INSERT_PURCHASE)) {
             callableStatement.setObject(1, insertPurchase.getInsertedBy(), Types.INTEGER);
             callableStatement.setBigDecimal(2, insertPurchase.getPurchasePrice());
             callableStatement.setObject(3, insertPurchase.getItemId(), Types.INTEGER);
@@ -225,11 +225,50 @@ public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
                 generalResponse.setMsg("Error in inserting the purchase Details");
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.error("---------------------------------------------{}", e.getMessage());
             generalResponse.setData("Input valid fields");
-            generalResponse.setMsg("Error in inserting the purchase Details");
+            generalResponse.setMsg(e.getMessage());
 
         }
+        return generalResponse;
+    }
+
+    @Override
+    public GeneralResponse addNewSalesDetails(SalesDetailsDto insertSalesDetails) {
+        InsertDetailsResponse insertPurchaseDetailsResponse = new InsertDetailsResponse();
+        GeneralResponse generalResponse = new GeneralResponse();
+
+        try (Connection connection = DataSourceUtils.getConnection(Objects.requireNonNull(jdbcTemplate.getDataSource()));
+             CallableStatement callableStatement = connection.prepareCall(DaoConstant.INSERT_SALES_DETAILS)) {
+
+            callableStatement.setInt(1, insertSalesDetails.getItemID());
+            callableStatement.setInt(2, insertSalesDetails.getItemCount());
+            callableStatement.setInt(3, insertSalesDetails.getInventoryLocationId());
+            callableStatement.setBigDecimal(4, insertSalesDetails.getSalesPrice());
+            callableStatement.setInt(5, insertSalesDetails.getSellerId());
+            callableStatement.setBoolean(6, insertSalesDetails.isB2b());
+
+            ResultSet resultSet = callableStatement.executeQuery();
+
+            if (resultSet.next()) {
+                insertPurchaseDetailsResponse.setRDataUpdated(resultSet.getString("rDataUpdated"));
+            }
+
+            generalResponse.setData(insertPurchaseDetailsResponse.getRDataUpdated());
+            if (Objects.equals(insertPurchaseDetailsResponse.getRDataUpdated(), "Sales Data Updated")) {
+                generalResponse.setMsg("Successfully data inserted");
+                generalResponse.setStatusCode(201);
+                generalResponse.setRes(true);
+            } else {
+                generalResponse.setMsg("Error in inserting the sales Details");
+            }
+        } catch (SQLException e) {
+            log.error("---------------------------------------------{}", e.getMessage());
+            generalResponse.setData("Input valid fields");
+            generalResponse.setMsg(e.getMessage());
+
+        }
+
         return generalResponse;
     }
 }
