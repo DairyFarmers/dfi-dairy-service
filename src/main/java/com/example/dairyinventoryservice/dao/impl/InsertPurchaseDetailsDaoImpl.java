@@ -1,6 +1,6 @@
 package com.example.dairyinventoryservice.dao.impl;
 
-import com.example.dairyinventoryservice.dao.InsertPurchaseDetailsDao;
+import com.example.dairyinventoryservice.dao.PostPurchaseDetailsDao;
 import com.example.dairyinventoryservice.dto.request.*;
 import com.example.dairyinventoryservice.dto.response.GeneralResponse;
 import com.example.dairyinventoryservice.dto.response.InsertDetailsResponse;
@@ -15,7 +15,7 @@ import java.util.Objects;
 
 @Slf4j
 @Repository
-public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
+public class InsertPurchaseDetailsDaoImpl implements PostPurchaseDetailsDao {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -133,7 +133,8 @@ public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
             callableStatement.setObject(2, updateUserDto.getMobileNumber(), Types.VARCHAR);
             callableStatement.setObject(3, updateUserDto.getFirstName(), Types.VARCHAR);
             callableStatement.setObject(4, updateUserDto.getLastName(), Types.VARCHAR);
-            callableStatement.setObject(5, updateUserDto.getUserRoleId(), Types.VARCHAR);
+            callableStatement.setInt(5, updateUserDto.getUserRoleId());
+            callableStatement.setInt(6, updateUserDto.getLocationID());
 
             ResultSet resultSet = callableStatement.executeQuery();
 
@@ -168,10 +169,11 @@ public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
 
             callableStatement.setObject(1, insertUserDto.getFirstName(), Types.VARCHAR);
             callableStatement.setObject(2, insertUserDto.getLastName(), Types.VARCHAR);
-            callableStatement.setObject(3, insertUserDto.getUserRoleId(), Types.INTEGER);
+            callableStatement.setInt(3, insertUserDto.getUserRoleId());
             callableStatement.setObject(4, insertUserDto.getEmail(), Types.VARCHAR);
             callableStatement.setObject(5, insertUserDto.getPhoneNumber(), Types.VARCHAR);
-            callableStatement.setObject(6, insertUserDto.getLocationId(), Types.INTEGER);
+            callableStatement.setInt(6, insertUserDto.getLocationId());
+            callableStatement.setObject(7,insertUserDto.getPassword(), Types.VARCHAR);
 
             ResultSet resultSet = callableStatement.executeQuery();
 
@@ -270,5 +272,42 @@ public class InsertPurchaseDetailsDaoImpl implements InsertPurchaseDetailsDao {
         }
 
         return generalResponse;
+    }
+
+    @Override
+    public GeneralResponse changePassword(PasswordChangeDto passwordChangeDto){
+        GeneralResponse generalResponse = new GeneralResponse();
+        try (Connection connection = DataSourceUtils.getConnection(Objects.requireNonNull(jdbcTemplate.getDataSource()));
+             CallableStatement callableStatement = connection.prepareCall(DaoConstant.CHANGE_PASSWORD)) {
+            callableStatement.setObject(1, passwordChangeDto.getEmailId(), Types.VARCHAR);
+            callableStatement.setObject(2, passwordChangeDto.getOldPassword(), Types.VARCHAR);
+            callableStatement.setObject(3, passwordChangeDto.getNewPassword(), Types.VARCHAR);
+
+            ResultSet resultSet = callableStatement.executeQuery();
+
+            if (resultSet.next()) {
+                generalResponse.setData(resultSet.getString(1));
+                generalResponse.setMsg("Successfully changed password");
+                generalResponse.setStatusCode(200);
+                generalResponse.setRes(true);
+            }
+
+            else {
+                generalResponse.setData(null);
+                generalResponse.setMsg("Error in inserting the sales Details");
+
+            }
+        }
+
+        catch (SQLException e) {
+            log.error("---------------------------------------------{}", e.getMessage());
+            generalResponse.setRes(false);
+            generalResponse.setData("Input valid data");
+            generalResponse.setMsg(e.getMessage());
+            generalResponse.setStatusCode(409);
+        }
+
+        return generalResponse;
+
     }
 }

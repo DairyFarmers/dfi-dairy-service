@@ -19,12 +19,3 @@ public class SalesDetailsDto {
     int sellerId;
     boolean isB2b;
 }
-
-/*
-*    pItemId INT,
-    pItemCount INT,
-    pInventoryLocationId INT,
-    pSalesPrice NUMERIC(10, 12),
-    pSellerId integer,
-    pIsb2b boolean
-    * */
