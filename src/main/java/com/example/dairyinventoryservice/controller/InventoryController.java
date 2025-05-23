@@ -4,11 +4,14 @@ import com.example.dairyinventoryservice.dto.request.*;
 import com.example.dairyinventoryservice.dto.response.GeneralResponse;
 import com.example.dairyinventoryservice.service.GetPurchaseDetailsService;
 import com.example.dairyinventoryservice.service.PostPurchaseDetailsService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/inventory")
 public class InventoryController {
@@ -40,22 +43,22 @@ public class InventoryController {
         return new ResponseEntity<>(generalResponse, HttpStatus.valueOf(generalResponse.getStatusCode()));
     }
 
-    @PostMapping("/userDetails")
-    public ResponseEntity<GeneralResponse> userDetails(@RequestBody String emailId) {
+    @GetMapping("/userDetails")
+    public ResponseEntity<GeneralResponse> userDetails(String emailId) {
         GeneralResponse generalResponse = new GeneralResponse();
         generalResponse = getPurchaseDetails.getUserDetails(emailId);
         return new ResponseEntity<>(generalResponse, HttpStatus.valueOf(generalResponse.getStatusCode()));
     }
 
-    @PostMapping("/purchaseDetails")
-    public ResponseEntity<GeneralResponse> purchaseDetails(@RequestBody String startDate, String endDate) {
+    @GetMapping("/purchaseDetails")
+    public ResponseEntity<GeneralResponse> purchaseDetails(String startDate, String endDate) {
         GeneralResponse generalResponse = new GeneralResponse();
         generalResponse = getPurchaseDetails.getPurchaseDetails(startDate,endDate);
         return new ResponseEntity<>(generalResponse, HttpStatus.valueOf(generalResponse.getStatusCode()));
     }
 
-    @PostMapping("/getProductCountByLocation")
-    public ResponseEntity<GeneralResponse> getProductCountByLocation(@RequestBody int itemId,int locationId) {
+    @GetMapping("/getProductCountByLocation")
+    public ResponseEntity<GeneralResponse> getProductCountByLocation(int itemId,int locationId) {
         GeneralResponse generalResponse = new GeneralResponse();
         generalResponse = getPurchaseDetails.getNoOfaProductInLocation(itemId,locationId);
         return new ResponseEntity<>(generalResponse, HttpStatus.valueOf(generalResponse.getStatusCode()));

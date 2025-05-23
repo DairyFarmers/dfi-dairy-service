@@ -23,6 +23,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 //                        .requestMatchers("/api/users/**").permitAll()
+                                .requestMatchers(
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html"
+                                ).permitAll()
                                 .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/inventory/**").hasAnyAuthority("1", "2") //Simmilally add related endpoint with access role
                                 .anyRequest().authenticated()
