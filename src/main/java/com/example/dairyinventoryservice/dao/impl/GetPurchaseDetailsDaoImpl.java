@@ -8,10 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,11 +36,13 @@ public class GetPurchaseDetailsDaoImpl implements GetPurchaseDetailsDao {
             if (resultSet != null) {
                 while (resultSet.next()) {
                     getUserDetails = new GetUserDetails();
+                    getUserDetails.setUserID(resultSet.getInt("luserid"));
                     getUserDetails.setFullName(resultSet.getString("lfullname"));
                     getUserDetails.setMobileNumber(resultSet.getString("lmobilenumber"));
                     getUserDetails.setUserRole(resultSet.getString("luserrole"));
                     getUserDetails.setUserRoleId(resultSet.getInt("luserroleid"));
                     getUserDetails.setLocationName(resultSet.getString("luserlocation"));
+
                     getUserDetailsList.add(getUserDetails);
                 }
                 generalResponse.setData(getUserDetailsList);
@@ -71,6 +70,48 @@ public class GetPurchaseDetailsDaoImpl implements GetPurchaseDetailsDao {
 
             callableStatement.setString(1, startDate);
             callableStatement.setString(2, endDate);
+
+            ResultSet resultSet = callableStatement.executeQuery();
+
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    getPurchaseDetailsResponse = new GetPurchaseDetailsResponse();
+                    getPurchaseDetailsResponse.setRCreatedOn(resultSet.getString("rcreatedon"));
+                    getPurchaseDetailsResponse.setRInventoryLocationName(resultSet.getString("rinventorylocationname"));
+                    getPurchaseDetailsResponse.setRCreatedBy(resultSet.getString("rcreatedby"));
+                    getPurchaseDetailsResponse.setRExpiryDate(resultSet.getString("rexpirydate"));
+                    getPurchaseDetailsResponse.setRItemName(resultSet.getString("ritemname"));
+                    getPurchaseDetailsResponse.setRItemCount(resultSet.getInt("ritemcount"));
+                    getPurchaseDetailsResponse.setRSoldBy(resultSet.getString("rsoldby"));
+                    getPurchaseDetailsList.add(getPurchaseDetailsResponse);
+                }
+                generalResponse.setData(getPurchaseDetailsList);
+                generalResponse.setMsg("Success");
+                generalResponse.setStatusCode(200);
+                generalResponse.setRes(true);
+            }
+
+        } catch (SQLException e) {
+            log.error("---------------------------------------------{}", e.getMessage());
+            generalResponse.setData("Input valid fields");
+            generalResponse.setMsg(e.getMessage());
+        }
+
+        return generalResponse;
+    }
+
+    @Override
+    public GeneralResponse getPurchaseDetailsByLocation(String startDate, String endDate,int locationId) {
+        GeneralResponse generalResponse = new GeneralResponse();
+        GetPurchaseDetailsResponse getPurchaseDetailsResponse = null;
+        List<GetPurchaseDetailsResponse> getPurchaseDetailsList = new ArrayList<>();
+
+        try (Connection connection = DataSourceUtils.getConnection(Objects.requireNonNull(jdbcTemplate.getDataSource()));
+             CallableStatement callableStatement = connection.prepareCall(DaoConstant.GET_PURCHASE_DETAILS_BY_DATE_RANGE)) {
+
+            callableStatement.setString(1, startDate);
+            callableStatement.setString(2, endDate);
+            callableStatement.setInt(3, locationId);
 
             ResultSet resultSet = callableStatement.executeQuery();
 
@@ -229,6 +270,85 @@ public class GetPurchaseDetailsDaoImpl implements GetPurchaseDetailsDao {
         } catch (SQLException e) {
             log.error("---------------------------------------------{}", e.getMessage());
             generalResponse.setData("Error occur while getting available item in specific location details");
+            generalResponse.setMsg(e.getMessage());
+        }
+
+        return generalResponse;
+    }
+
+    @Override
+    public GeneralResponse getRevenueDetail(String startDate, String endDate){
+        GeneralResponse generalResponse = new GeneralResponse();
+        InventoryRevenueDto inventoryRevenueDto = null;
+        List<InventoryRevenueDto>inventoryRevenueDtoList = new ArrayList<>();
+
+        try (Connection connection = DataSourceUtils.getConnection(Objects.requireNonNull(jdbcTemplate.getDataSource()));
+             CallableStatement callableStatement = connection.prepareCall(DaoConstant.GET_REVENUE_BY_DATE)) {
+
+            callableStatement.setString(1,startDate);
+            callableStatement.setString(2,endDate);
+
+            ResultSet resultSet = callableStatement.executeQuery();
+
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    inventoryRevenueDto = new InventoryRevenueDto();
+                    inventoryRevenueDto.setCreatedOn(resultSet.getString("lcreatedon"));
+                    inventoryRevenueDto.setItemName(resultSet.getString("litemname"));
+                    inventoryRevenueDto.setInventoryItemCount(resultSet.getInt("linventoryitemcount"));
+                    inventoryRevenueDto.setSoldItemCount(resultSet.getInt("lsolditemcount"));
+                    inventoryRevenueDto.setLocationName(resultSet.getString("llocationname"));
+                    inventoryRevenueDto.setRevenue(resultSet.getBigDecimal("lrevenue"));
+                    inventoryRevenueDto.setProfit(resultSet.getBigDecimal("lprofit"));
+                    inventoryRevenueDtoList.add(inventoryRevenueDto);
+                }
+            }
+            generalResponse.setData(inventoryRevenueDtoList);
+            generalResponse.setMsg("Success");
+            generalResponse.setStatusCode(200);
+            generalResponse.setRes(true);
+        } catch (SQLException e) {
+            log.error("---------------------------------------------{}", e.getMessage());
+            generalResponse.setData("Error occur while getting entire revenue details");
+            generalResponse.setMsg(e.getMessage());
+        }
+
+        return generalResponse;
+    }
+
+    @Override
+    public GeneralResponse getRevenueDetailsByLocation(String startDate, String endDate, int locationId){
+        GeneralResponse generalResponse = new GeneralResponse();
+        SalesRepRevenueDto salesRepRevenueDto = null;
+        List<SalesRepRevenueDto>salesRepRevenueDtoList = new ArrayList<>();
+
+        try (Connection connection = DataSourceUtils.getConnection(Objects.requireNonNull(jdbcTemplate.getDataSource()));
+             CallableStatement callableStatement = connection.prepareCall(DaoConstant.GET_REVENUE_BY_DATE_AND_LOCATION)) {
+
+            callableStatement.setString(1,startDate);
+            callableStatement.setString(2,endDate);
+            callableStatement.setInt(3,locationId);
+            ResultSet resultSet = callableStatement.executeQuery();
+
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    salesRepRevenueDto = new SalesRepRevenueDto();
+                    salesRepRevenueDto.setCreatedOn(resultSet.getString("lcreatedon"));
+                    salesRepRevenueDto.setItemName(resultSet.getString("litemname"));
+                    salesRepRevenueDto.setInventoryItemCount(resultSet.getInt("linventoryitemcount"));
+                    salesRepRevenueDto.setSoldItemCount(resultSet.getInt("lsolditemcount"));
+                    salesRepRevenueDto.setRevenue(resultSet.getBigDecimal("lrevenue"));
+                    salesRepRevenueDto.setProfit(resultSet.getBigDecimal("lprofit"));
+                    salesRepRevenueDtoList.add(salesRepRevenueDto);
+                }
+            }
+            generalResponse.setData(salesRepRevenueDtoList);
+            generalResponse.setMsg("Success");
+            generalResponse.setStatusCode(200);
+            generalResponse.setRes(true);
+        } catch (SQLException e) {
+            log.error("---------------------------------------------{}", e.getMessage());
+            generalResponse.setData("Error occur while getting revenue details by location");
             generalResponse.setMsg(e.getMessage());
         }
 

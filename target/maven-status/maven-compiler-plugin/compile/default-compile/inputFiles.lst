@@ -2,7 +2,11 @@ C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example
 C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\config\JwtAuthenticationFilter.java
 C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\config\OpenApiConfig.java
 C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\config\SecurityConfig.java
-C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\controller\InventoryController.java
+C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\controller\AdminControllerController.java
+C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\controller\B2bController.java
+C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\controller\FarmerController.java
+C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\controller\InventoryManagerController.java
+C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\controller\SalesRepController.java
 C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\controller\UserAuthController.java
 C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\DairyInventoryServiceApplication.java
 C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\dao\GetPurchaseDetailsDao.java

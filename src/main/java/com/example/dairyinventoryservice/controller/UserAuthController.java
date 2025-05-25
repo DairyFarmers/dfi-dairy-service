@@ -6,7 +6,6 @@ import com.example.dairyinventoryservice.dto.request.UserAuthRequestDto;
 import com.example.dairyinventoryservice.dto.response.AuthResponseDto;
 import com.example.dairyinventoryservice.dto.response.GeneralResponse;
 import com.example.dairyinventoryservice.dto.response.UserAuthResponseDto;
-import com.example.dairyinventoryservice.service.PostPurchaseDetailsService;
 import com.example.dairyinventoryservice.service.UserAuthService;
 import com.example.dairyinventoryservice.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;

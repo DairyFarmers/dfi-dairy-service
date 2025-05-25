@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetUserDetails {
+    private int UserID;
     private String fullName;
     private String mobileNumber;
     private String UserRole;

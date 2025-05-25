@@ -29,10 +29,48 @@ public class SalesRepController {
         return new ResponseEntity<>(generalResponse, HttpStatus.valueOf(generalResponse.getStatusCode()));
     }
 
+    @GetMapping("/getItemDetails")
+    public ResponseEntity<GeneralResponse> getItemDetails() {
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse = getPurchaseDetails.getItemDetails();
+        return new ResponseEntity<>(generalResponse, HttpStatus.valueOf(generalResponse.getStatusCode()));
+    }
+
+    @GetMapping("/getLocationDetails")
+    public ResponseEntity<GeneralResponse> getLocationDetails() {
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse = getPurchaseDetails.getLocationDetails();
+        return new ResponseEntity<>(generalResponse, HttpStatus.valueOf(generalResponse.getStatusCode()));
+    }
+
     @GetMapping("/getProductCountByLocation")
     public ResponseEntity<GeneralResponse> getProductCountByLocation(int itemId,int locationId) {
         GeneralResponse generalResponse = new GeneralResponse();
         generalResponse = getPurchaseDetails.getNoOfaProductInLocation(itemId,locationId);
+        return new ResponseEntity<>(generalResponse, HttpStatus.valueOf(generalResponse.getStatusCode()));
+    }
+
+    //Add a function to find the purchase details by location
+    @GetMapping("/purchaseDetails")
+    public ResponseEntity<GeneralResponse> purchaseDetailsByLocation(String startDate, String endDate,int locationId) {
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse = getPurchaseDetails.getPurchaseDetailsByLocation(startDate, endDate, locationId);
+        return new ResponseEntity<>(generalResponse, HttpStatus.valueOf(generalResponse.getStatusCode()));
+    }
+
+    // Add a function to find the profit from the location and sales details (Revenue)
+    @GetMapping("/revenue")
+    public ResponseEntity<GeneralResponse> salesDetailsByLocation(String startDate, String endDate,int locationId) {
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse = getPurchaseDetails.getRevenueDetailsByLocation(startDate, endDate, locationId);
+        return new ResponseEntity<>(generalResponse, HttpStatus.valueOf(generalResponse.getStatusCode()));
+    }
+
+
+    @PostMapping("/insertPurchase")
+    public ResponseEntity<GeneralResponse> insertPurchaseDetail(@RequestBody PurchaseDetailDto insertPurchase){
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse = insertPurchaseDetails.addPurchaseDetails(insertPurchase);
         return new ResponseEntity<>(generalResponse, HttpStatus.valueOf(generalResponse.getStatusCode()));
     }
 
@@ -43,15 +81,5 @@ public class SalesRepController {
         return new ResponseEntity<>(generalResponse, HttpStatus.valueOf(generalResponse.getStatusCode()));
     }
 
-    @PostMapping("/insertPurchase")
-    public ResponseEntity<GeneralResponse> insertPurchaseDetail(@RequestBody PurchaseDetailDto insertPurchase){
-        GeneralResponse generalResponse = new GeneralResponse();
-        generalResponse = insertPurchaseDetails.addPurchaseDetails(insertPurchase);
-        return new ResponseEntity<>(generalResponse, HttpStatus.valueOf(generalResponse.getStatusCode()));
-    }
-
-    //Add a function to find the purchase details by location
-
-    // Add a function to find the profit from the location and sales details
 
 }

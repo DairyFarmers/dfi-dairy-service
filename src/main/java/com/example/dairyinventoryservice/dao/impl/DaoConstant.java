@@ -22,9 +22,7 @@ public class DaoConstant {
 
     public final static String GET_USER_DETAIL_BY_EMAIL_ID = "{CALL get_user_details_by_email_id(?)}";
 
-    public final static String GET_PURCHASE_DETAILS_BY_DATE_RANGE = "{CALL get_purchase_details( ?, ?)}";
-
-    public final static String GET_AVAILABLE_ITEMS = "{CALL get_no_of_available_item( ?, ?)}";
+    public final static String GET_PURCHASE_DETAILS_BY_DATE_RANGE = "{CALL get_purchase_details_by_date_range( ?, ?)}";
 
     public final static String GET_ITEM_DETAILS = "{CALL get_item_details()}";
 
@@ -34,5 +32,10 @@ public class DaoConstant {
 
     public final static String GET_NO_OF_AVAILABLE_ITEMS = "{CALL get_no_of_available_item( ?, ?)}";
 
+    public final static String GET_NO_OF_PURCHASE_DETAILS_BY_LOCATION = "{CALL get_purchase_details_by_date_range_and_location( ?, ?)}";
+
+    public final static String GET_REVENUE_BY_DATE = "{CALL get_revenue_details_by_date_range( ?, ?)}";
+
+    public final static String GET_REVENUE_BY_DATE_AND_LOCATION = "{CALL get_revenue_details_by_date_range_and_location( ?, ?, ?)}";
 
 }
