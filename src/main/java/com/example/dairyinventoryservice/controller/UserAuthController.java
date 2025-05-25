@@ -47,13 +47,12 @@ public class UserAuthController {
             log.info(user.getEmail());
             String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
             authResponseDto.setToken(token);
-            authResponseDto.setEmail(user.getEmail());
-            authResponseDto.setRole(user.getRole());
 
             generalResponse.setData(authResponseDto);
             generalResponse.setRes(true);
             generalResponse.setMsg("Authenticated");
             generalResponse.setStatusCode(200);
+
         } else {
             generalResponse.setData(null);
             generalResponse.setMsg("Not-Authenticated");
