@@ -16,4 +16,5 @@ public class UpdateUserDto {
     private String lastName;
     private int userRoleId;
     private int locationID;
+    private String password;
 }

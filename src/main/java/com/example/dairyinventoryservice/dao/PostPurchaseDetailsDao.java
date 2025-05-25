@@ -19,6 +19,6 @@ public interface PostPurchaseDetailsDao {
 
     public GeneralResponse addNewSalesDetails(SalesDetailsDto insertSalesDetails);
 
-    public GeneralResponse changePassword(PasswordChangeDto passwordChangeDto);
+
 
 }

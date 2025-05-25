@@ -8,7 +8,7 @@ public class DaoConstant {
 
     public final static String INSERT_USER = "{CALL insert_user_details( ?, ?, ?, ?, ?, ?, ?)}";
 
-    public final static String UPDATE_USER = "{CALL update_user_details( ?, ?, ?, ?, ?, ?)}";
+    public final static String UPDATE_USER = "{CALL update_user_details( ?, ?, ?, ?, ?, ?, ?)}";
 
     public final static String CHANGE_PASSWORD = "{CALL change_password( ?, ?, ?)}";
 

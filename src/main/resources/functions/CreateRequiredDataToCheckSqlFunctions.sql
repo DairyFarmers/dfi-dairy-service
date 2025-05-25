@@ -26,7 +26,12 @@ SELECT FROM insert_user_role('Supper-Admin');
 SELECT FROM insert_user_role('Inventory-Manager');
 SELECT FROM insert_user_role('Sales-Representative');
 SELECT FROM insert_user_role('Farmer');
+SELECT FROM insert_user_role('B2B Partner');
 
 
 
 SELECT FROM insert_user_details('Anuruththan', 'Baskaran', 1, 'anuruththan@gmail.com', '0779613315', 1, '12345678@Anu');
+SELECT FROM insert_user_details('Anuruththan', 'Baskaran', 2, 'tharsan@gmail.com', '0779613315', 1, '12345678@Tha');
+SELECT FROM insert_user_details('Anuruththan', 'Baskaran', 3, 'santhos@gmail.com', '0779613315', 1, '12345678@San');
+SELECT FROM insert_user_details('Anuruththan', 'Baskaran', 4, 'dirusan@gmail.com', '0779613315', 1, '12345678@Diru');
+SELECT FROM insert_user_details('Anuruththan', 'Baskaran', 4, 'printhan@gmail.com', '0779613315', 1, '12345678@Prin');

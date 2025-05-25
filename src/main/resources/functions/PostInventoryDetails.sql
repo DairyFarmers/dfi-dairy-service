@@ -34,11 +34,10 @@ CREATE TABLE IF NOT EXISTS "UserDetails"
     "E-mail"         CHARACTER VARYING NOT NULL,
     "MobileNumber"   CHARACTER VARYING NOT NULL,
     "UserLocationId" INT               NOT NULL,
-    "Password" CHARACTER VARYING NOT NULL,
+    "Password"       CHARACTER VARYING NOT NULL,
     FOREIGN KEY ("UserRoleId") REFERENCES "UserRole" ("UserRoleId"),
     FOREIGN KEY ("UserLocationId") REFERENCES "LocationDetails" ("LocationId")
 );
-
 
 
 -- Create table for purchase details
@@ -69,8 +68,8 @@ CREATE TABLE IF NOT EXISTS "SalesDetails"
     "ItemId"              INT,
     "ItemCount"           INT                     NOT NULL,
     "InventoryLocationId" INT                     NOT NULL,
-    "SellerId" INT,
-    "IsB2B" BOOLEAN,
+    "SellerId"            INT,
+    "IsB2B"               BOOLEAN,
     FOREIGN KEY ("ItemId") REFERENCES "ItemsDetails" ("ItemId"),
     FOREIGN KEY ("InventoryLocationId") REFERENCES "LocationDetails" ("LocationId")
 );
@@ -229,7 +228,8 @@ AS
             RAISE EXCEPTION ''User role already exists'';
         END IF;
 
-        INSERT INTO "UserRole"("UserRoleName")
+        INSERT
+        INTO "UserRole"("UserRoleName")
         VALUES (pUserRoleName);
 
         "rDataUpdated" := ''User Role Successfully Inserted'';
@@ -319,8 +319,10 @@ AS
             RAISE EXCEPTION ''User with the given email already exists'';
         END IF;
 
-        INSERT INTO "UserDetails"("FirstName", "LastName", "UserRoleId", "E-mail", "MobileNumber", "UserLocationId", "Password")
-        VALUES (pFirstName, pLastName, pUserRoleId, pEmail, pMobileNumber, pLocation, ENCODE(DIGEST(pPassword, ''sha256''), ''hex''));
+        INSERT INTO "UserDetails"("FirstName", "LastName", "UserRoleId", "E-mail", "MobileNumber", "UserLocationId",
+                                  "Password")
+        VALUES (pFirstName, pLastName, pUserRoleId, pEmail, pMobileNumber, pLocation,
+                ENCODE(DIGEST(pPassword, ''sha256''), ''hex''));
 
         "rDataUpdated" := ''User Details Successfully Inserted'';
         RETURN QUERY SELECT "rDataUpdated";
@@ -381,7 +383,8 @@ CREATE OR REPLACE FUNCTION update_user_details(
     pFirstName CHARACTER VARYING DEFAULT NULL,
     pLastName CHARACTER VARYING DEFAULT NULL,
     pUserRoleId INT DEFAULT NULL,
-    pLocationId INT DEFAULT NULL
+    pLocationId INT DEFAULT NULL,
+    pPassword CHARACTER VARYING DEFAULT NULL
 )
     RETURNS TABLE
             (
@@ -409,6 +412,10 @@ AS
             RAISE EXCEPTION ''User not found with given Email or Mobile Number'';
         END IF;
 
+        IF pPassword = '''' THEN
+            pPassword := NULL;
+        END IF;
+
         -- Perform update only for non-null fields
         UPDATE "UserDetails"
         SET "FirstName"      = COALESCE(pFirstName, "FirstName"),
@@ -416,7 +423,8 @@ AS
             "UserRoleId"     = COALESCE(pUserRoleId, "UserRoleId"),
             "E-mail"         = COALESCE(pemail, "E-mail"),
             "MobileNumber"   = COALESCE(pmobilenumber, "MobileNumber"),
-            "UserLocationId" =COALESCE(pLocationId, "UserLocationId")
+            "UserLocationId" =COALESCE(pLocationId, "UserLocationId"),
+            "Password"       =COALESCE(ENCODE(DIGEST(pPassword, ''sha256''), ''hex''), "Password")
         WHERE "UserDetailId" = lUserId;
 
         "rDataUpdated" := ''User Details Successfully Updated'';
@@ -491,8 +499,10 @@ AS
                 END LOOP;
 
             -- Insert into SalesDetails
-            INSERT INTO "SalesDetails" ("CreatedDate", "SalesPrice", "ItemId", "ItemCount", "InventoryLocationId","SellerId", "IsB2B")
-            VALUES (CURRENT_TIMESTAMP, psalesprice, pitemid, pitemcount::BIGINT, pinventorylocationid, pSellerID, pIsB2b);
+            INSERT INTO "SalesDetails" ("CreatedDate", "SalesPrice", "ItemId", "ItemCount", "InventoryLocationId",
+                                        "SellerId", "IsB2B")
+            VALUES (CURRENT_TIMESTAMP, psalesprice, pitemid, pitemcount::BIGINT, pinventorylocationid, pSellerID,
+                    pIsB2b);
 
             resultMsg := ''Sales Data Updated''::CHARACTER VARYING;
         ELSE
@@ -509,19 +519,23 @@ AS
 
 
 CREATE OR REPLACE FUNCTION get_user_auth_by_email(p_email VARCHAR)
-    RETURNS TABLE (
-                      email VARCHAR,
-                      password VARCHAR,
-                      role int
-                  ) LANGUAGE plpgsql
-    AS
-    '
-BEGIN
-    RETURN QUERY
-        SELECT u."E-mail", u."Password", u."UserRoleId"
-        FROM "UserDetails" u
-        WHERE u."E-mail" = p_email;
-END;
+    RETURNS TABLE
+            (
+                email    VARCHAR,
+                password VARCHAR,
+                role     int
+            )
+    LANGUAGE plpgsql
+AS
+'
+    BEGIN
+        RETURN QUERY
+            SELECT u."E-mail",
+                   u."Password",
+                   u."UserRoleId"
+            FROM "UserDetails" u
+            WHERE u."E-mail" = p_email;
+    END;
 ';
 
 
@@ -529,31 +543,36 @@ CREATE OR REPLACE FUNCTION change_password(
     pUserEmail CHARACTER VARYING DEFAULT NOT NULL,
     pOldPassword CHARACTER VARYING DEFAULT NOT NULL,
     pNewPassword CHARACTER VARYING DEFAULT NOT NULL
-)   RETURNS TABLE("rPasswordHaveChanged" CHARACTER VARYING)
+)
+    RETURNS TABLE
+            (
+                "rPasswordHaveChanged" CHARACTER VARYING
+            )
     LANGUAGE plpgsql
 AS
 '
-DECLARE
-    lEmail CHARACTER VARYING;
-    lPassword CHARACTER VARYING:=null;
-BEGIN
-    SELECT password into lPassword FROM get_user_auth_by_email(pUserEmail);
-    IF lPassword = ENCODE(DIGEST(pNewPassword, ''sha256''), ''hex'') THEN
-        RAISE EXCEPTION ''Old password and New password are same.'';
-    END IF;
+    DECLARE
+        lEmail    CHARACTER VARYING;
+        lPassword CHARACTER VARYING := null;
+    BEGIN
+        SELECT password
+        into lPassword
+        FROM get_user_auth_by_email(pUserEmail);
+        IF lPassword = ENCODE(DIGEST(pNewPassword, ''sha256''), ''hex'') THEN
+            RAISE EXCEPTION ''Old password and New password are same.'';
+        END IF;
 
-    IF lPassword != ENCODE(DIGEST(pOldPassword, ''sha256''), ''hex'')  THEN
-        RAISE EXCEPTION ''Current password is Miss matching.'';
-    END IF;
+        IF lPassword != ENCODE(DIGEST(pOldPassword, ''sha256''), ''hex'') THEN
+            RAISE EXCEPTION ''Current password is Miss matching.'';
+        END IF;
 
-    UPDATE "UserDetails"
-    SET
-        "Password"=ENCODE(DIGEST(pNewPassword, ''sha256''), ''hex'')
-    WHERE "E-mail" = pUserEmail;
+        UPDATE "UserDetails"
+        SET "Password"=ENCODE(DIGEST(pNewPassword, ''sha256''), ''hex'')
+        WHERE "E-mail" = pUserEmail;
 
-    "rPasswordHaveChanged" := ''Password has been updated'';
+        "rPasswordHaveChanged" := ''Password has been updated'';
 
-    RETURN QUERY SELECT "rPasswordHaveChanged";
+        RETURN QUERY SELECT "rPasswordHaveChanged";
 
-END;
+    END;
 ';

@@ -22,14 +22,17 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/users/**").permitAll()
                                 .requestMatchers(
                                         "/v3/api-docs/**",
                                         "/swagger-ui/**",
                                         "/swagger-ui.html"
                                 ).permitAll()
                                 .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/inventory/**").hasAnyAuthority("1", "2") //Simmilally add related endpoint with access role
+                                .requestMatchers("/admin/**").hasAnyAuthority("1")
+                                .requestMatchers("/inventory/**").hasAnyAuthority("2")
+                                .requestMatchers("/shop/**").hasAnyAuthority( "3")
+                                .requestMatchers("/client/**").hasAnyAuthority( "4")
+                                .requestMatchers("/b2b/**").hasAnyAuthority( "5")
                                 .anyRequest().authenticated()
                 );
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

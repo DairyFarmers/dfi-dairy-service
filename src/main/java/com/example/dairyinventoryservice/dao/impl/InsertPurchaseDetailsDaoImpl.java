@@ -274,40 +274,5 @@ public class InsertPurchaseDetailsDaoImpl implements PostPurchaseDetailsDao {
         return generalResponse;
     }
 
-    @Override
-    public GeneralResponse changePassword(PasswordChangeDto passwordChangeDto){
-        GeneralResponse generalResponse = new GeneralResponse();
-        try (Connection connection = DataSourceUtils.getConnection(Objects.requireNonNull(jdbcTemplate.getDataSource()));
-             CallableStatement callableStatement = connection.prepareCall(DaoConstant.CHANGE_PASSWORD)) {
-            callableStatement.setObject(1, passwordChangeDto.getEmailId(), Types.VARCHAR);
-            callableStatement.setObject(2, passwordChangeDto.getOldPassword(), Types.VARCHAR);
-            callableStatement.setObject(3, passwordChangeDto.getNewPassword(), Types.VARCHAR);
 
-            ResultSet resultSet = callableStatement.executeQuery();
-
-            if (resultSet.next()) {
-                generalResponse.setData(resultSet.getString(1));
-                generalResponse.setMsg("Successfully changed password");
-                generalResponse.setStatusCode(200);
-                generalResponse.setRes(true);
-            }
-
-            else {
-                generalResponse.setData(null);
-                generalResponse.setMsg("Error in inserting the sales Details");
-
-            }
-        }
-
-        catch (SQLException e) {
-            log.error("---------------------------------------------{}", e.getMessage());
-            generalResponse.setRes(false);
-            generalResponse.setData("Input valid data");
-            generalResponse.setMsg(e.getMessage());
-            generalResponse.setStatusCode(409);
-        }
-
-        return generalResponse;
-
-    }
 }

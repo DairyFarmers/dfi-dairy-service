@@ -49,9 +49,6 @@ public class InsertPurchaseDetailsServiceImpl implements PostPurchaseDetailsServ
         return insertPurchaseDetailsDao.addNewSalesDetails(insertSalesDetails);
     }
 
-    @Override
-    public GeneralResponse changePassword(PasswordChangeDto passwordChangeDto){
-        return insertPurchaseDetailsDao.changePassword(passwordChangeDto);
-    }
+
 
 }

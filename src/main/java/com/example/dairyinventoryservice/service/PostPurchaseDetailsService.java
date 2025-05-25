@@ -20,6 +20,4 @@ public interface PostPurchaseDetailsService {
 
     public GeneralResponse addNewSalesDetails(SalesDetailsDto insertSalesDetails);
 
-    public GeneralResponse changePassword(PasswordChangeDto passwordChangeDto);
-
 }
