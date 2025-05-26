@@ -14,7 +14,9 @@ CREATE TABLE IF NOT EXISTS "ItemsDetails"
 (
     "ItemId"                SERIAL PRIMARY KEY,
     "ItemName"              CHARACTER VARYING,
-    "DefaultExpiryDuration" CHARACTER VARYING
+    "DefaultExpiryDuration" CHARACTER VARYING,
+    "MaxPurchasePrice"      NUMERIC(10, 2),
+    "MaxSellingPrice"       NUMERIC(10, 2)
 );
 
 --Create User Role  Table
@@ -31,7 +33,7 @@ CREATE TABLE IF NOT EXISTS "UserDetails"
     "FirstName"      CHARACTER VARYING,
     "LastName"       CHARACTER VARYING,
     "UserRoleId"     INT               NOT NULL,
-    "E-mail"         CHARACTER VARYING NOT NULL,
+    "E-mail"         CHARACTER VARYING NOT NULL UNIQUE,
     "MobileNumber"   CHARACTER VARYING NOT NULL,
     "UserLocationId" INT               NOT NULL,
     "Password"       CHARACTER VARYING NOT NULL,
@@ -44,11 +46,11 @@ CREATE TABLE IF NOT EXISTS "UserDetails"
 CREATE TABLE IF NOT EXISTS "PurchaseDetails"
 (
     "PurchaseId"          VARCHAR(30) PRIMARY KEY NOT NULL,
-    "CreatedDate"         TIMESTAMP WITH TIME ZONE,
+    "CreatedDate"         TIMESTAMP,
     "InsertedBy"          INT                     NOT NULL,
     "PurchasePrice"       DECIMAL(10, 2),
     "ItemId"              INT                     NOT NULL,
-    "ExpiryDate"          TIMESTAMP WITH TIME ZONE,
+    "ExpiryDate"          TIMESTAMP,
     "SellerId"            INT                     NOT NULL,
     "ItemCount"           INT                     NOT NULL,
     "InventoryLocationId" INT                     NOT NULL,
@@ -58,12 +60,27 @@ CREATE TABLE IF NOT EXISTS "PurchaseDetails"
     FOREIGN KEY ("InventoryLocationId") REFERENCES "LocationDetails" ("LocationId")
 );
 
+-- Creating a table that replicates farmers sales
+CREATE TABLE IF NOT EXISTS "FarmerSalesDetails"
+(
+    "FarmerSalesDetailId" BIGSERIAL PRIMARY KEY,
+    "SoldOn"              TIMESTAMP,
+    "EmailId"             CHARACTER VARYING,
+    "SoldUnitCount"       BIGINT,
+    "PurchaseDetailId"    CHARACTER VARYING,
+    "Revenue"             NUMERIC(10, 2),
+    "ItemName"            CHARACTER VARYING,
+    "LocationName"        CHARACTER VARYING,
+    FOREIGN KEY ("PurchaseDetailId") REFERENCES "PurchaseDetails" ("PurchaseId"),
+    FOREIGN KEY ("EmailId") REFERENCES "UserDetails" ("E-mail")
+);
+
 
 -- Create Sales Details
 CREATE TABLE IF NOT EXISTS "SalesDetails"
 (
     "SalesDetailId"       VARCHAR(30) PRIMARY KEY NOT NULL,
-    "CreatedDate"         TIMESTAMP WITH TIME ZONE,
+    "CreatedDate"         TIMESTAMP,
     "SalesPrice"          DECIMAL(10, 2),
     "ItemId"              INT,
     "ItemCount"           INT                     NOT NULL,
@@ -130,13 +147,13 @@ EXECUTE FUNCTION generate_sales_id();
 CREATE OR REPLACE FUNCTION get_expiry_date(pItemId INT)
     RETURNS TABLE
             (
-                "rExpiryDate" TIMESTAMP WITH TIME ZONE
+                "rExpiryDate" TIMESTAMP
             )
     LANGUAGE plpgsql
 AS
 '
     DECLARE
-        lExpiryDate TIMESTAMP WITH TIME ZONE;
+        lExpiryDate TIMESTAMP;
         lDuration   CHARACTER VARYING;
     BEGIN
 
@@ -172,7 +189,15 @@ CREATE OR REPLACE FUNCTION insert_purchase_details(
 AS
 '
     DECLARE
-        lExpiryDate TIMESTAMP;
+        lExpiryDate       TIMESTAMP;
+        lCurrentDateTime  TIMESTAMP := current_timestamp::timestamp;
+        lPurchaseDetailId CHARACTER VARYING;
+        lSalesPrice       NUMERIC(10, 2);
+        lUnitSold         BIGINT;
+        lItemName         CHARACTER VARYING;
+        lSellerRole       INT;
+        lSellerEmail      CHARACTER VARYING;
+        lLocationName     CHARACTER VARYING;
     BEGIN
         SELECT "rExpiryDate"
         into lExpiryDate
@@ -188,8 +213,30 @@ AS
 
         INSERT INTO "PurchaseDetails"("CreatedDate", "InsertedBy", "PurchasePrice", "ItemId", "ExpiryDate", "SellerId",
                                       "ItemCount", "InventoryLocationId")
-        VALUES (current_timestamp::timestamp, pInsertedBy, pPurchasePrice, pItemId, lExpiryDate::timestamp, pSellerId,
+        VALUES (lCurrentDateTime, pInsertedBy, pPurchasePrice, pItemId, lExpiryDate::timestamp, pSellerId,
                 pItemCount, plocationId);
+
+        SELECT "PurchaseId",
+               "PurchasePrice",
+               "ItemCount",
+               ID."ItemName",
+               LD."LocationName",
+               UD."E-mail",
+               UD."UserRoleId"
+        into lPurchaseDetailId, lSalesPrice, lUnitSold, lItemName, lLocationName, lSellerEmail, lSellerRole
+        FROM "PurchaseDetails"
+                 LEFT JOIN "ItemsDetails" ID on "PurchaseDetails"."ItemId" = ID."ItemId"
+                 LEFT JOIN "LocationDetails" LD on LD."LocationId" = "PurchaseDetails"."InventoryLocationId"
+                 LEFT JOIN "UserDetails" UD on UD."UserDetailId" = "PurchaseDetails"."SellerId"
+        WHERE "CreatedDate"::timestamp = lCurrentDateTime;
+
+        IF lSellerRole = 4 THEN
+            INSERT INTO "FarmerSalesDetails"("SoldOn", "EmailId", "SoldUnitCount", "PurchaseDetailId", "Revenue",
+                                             "ItemName",
+                                             "LocationName")
+            VALUES (lCurrentDateTime, lSellerEmail, lUnitSold, lPurchaseDetailId, lSalesPrice, lItemName,
+                    lLocationName);
+        END IF;
 
         "rDataUpdated" := ''Purchase Details Successfully Inserted'';
         RETURN QUERY SELECT "rDataUpdated";
@@ -246,7 +293,9 @@ AS
 -- Insert Item Details
 CREATE OR REPLACE FUNCTION insert_item_details(
     pItemName CHARACTER VARYING,
-    pDefaultExpiryDuration CHARACTER VARYING
+    pDefaultExpiryDuration CHARACTER VARYING,
+    pMaxPurchasePrice NUMERIC(10, 2),
+    pMaxSellingPrice NUMERIC(10, 2)
 )
     RETURNS TABLE
             (
@@ -271,8 +320,8 @@ AS
             RAISE EXCEPTION ''Item already exists in the database'';
         END IF;
 
-        INSERT INTO "ItemsDetails"("ItemName", "DefaultExpiryDuration")
-        VALUES (pItemName, pDefaultExpiryDuration);
+        INSERT INTO "ItemsDetails"("ItemName", "DefaultExpiryDuration", "MaxPurchasePrice", "MaxSellingPrice")
+        VALUES (pItemName, pDefaultExpiryDuration, pMaxPurchasePrice, pMaxSellingPrice);
 
         "rDataUpdated" := ''Item Details Successfully Inserted'';
         RETURN QUERY SELECT "rDataUpdated";

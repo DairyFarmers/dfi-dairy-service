@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -14,4 +16,6 @@ public class GetItemDetailsDto {
     private int itemId;
     private String itemName;
     private String itemExpiryDuration;
+    private BigDecimal maxPurchaseItemPrice;
+    private BigDecimal maxSellingItemPrice;
 }

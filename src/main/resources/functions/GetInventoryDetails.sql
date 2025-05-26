@@ -82,7 +82,9 @@ CREATE OR REPLACE FUNCTION get_item_details()
             (
                 rItemName           CHARACTER VARYING,
                 rItemID             INT,
-                rItemExpiryDuration VARCHAR
+                rItemExpiryDuration VARCHAR,
+                rItemMaxPurchasePrice NUMERIC(10, 2),
+                rItemMaxSellingPrice NUMERIC(10,2)
             )
     LANGUAGE plpgsql
 AS
@@ -92,7 +94,9 @@ AS
         RETURN QUERY
             SELECT "ItemName",
                    "ItemId",
-                   "DefaultExpiryDuration"
+                   "DefaultExpiryDuration",
+                   "MaxPurchasePrice",
+                    "MaxSellingPrice"
             FROM "ItemsDetails";
 
     END;

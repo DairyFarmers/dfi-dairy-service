@@ -16,7 +16,7 @@ public class DaoConstant {
 
     public final static String INSERT_LOCATION = "{CALL insert_location_details(?)}";
 
-    public final static String INSERT_ITEM_DETAIL =  "{CALL insert_item_details( ?, ?)}";
+    public final static String INSERT_ITEM_DETAIL =  "{CALL insert_item_details( ?, ?, ?, ?)}";
 
     public final static String INSERT_SALES_DETAILS =  "{CALL insert_sales_details( ?, ?, ?, ?, ?, ?)}";
 

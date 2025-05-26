@@ -19,7 +19,6 @@ public class PasswordUtils {
             return sb.toString();
         } catch (Exception e) {
             log.error("Error hashing password {}",e.getMessage());
-//            throw new RuntimeException("Error hashing password", e);
             return null;
         }
     }

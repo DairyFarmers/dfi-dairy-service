@@ -1,24 +1,24 @@
 --Insert the products to
 SELECT
-FROM insert_item_details('Panner', '30 Days');
+FROM insert_item_details('Panner', '30 Days', 100, 205.56); --1
 SELECT
-FROM insert_item_details('Curd', '10 Days');
+FROM insert_item_details('Curd', '10 Days', 256, 300);
 SELECT
-FROM insert_item_details('Milk', '02 Days');
+FROM insert_item_details('Milk', '02 Days', 654, 700);
 SELECT
-FROM insert_item_details('Milk Chocolate', '40 Days');
+FROM insert_item_details('Milk Chocolate', '40 Days', 865, 900);
 SELECT
-FROM insert_item_details('Gee', '30 Days');
+FROM insert_item_details('Gee', '30 Days', 564, 600);
 SELECT
-FROM insert_item_details('Cheese', '100 Days');
+FROM insert_item_details('Cheese', '100 Days', 568.56, 986.56);
 SELECT
-FROM insert_item_details('Yogut', '70 Days');
+FROM insert_item_details('Yogut', '70 Days', 456.35, 753.65); --10
 
 
 -- Insert the cities for the inventory/ shops
 
 SELECT
-FROM insert_location_details('Colombo');
+FROM insert_location_details('Colombo');--1
 SELECT
 FROM insert_location_details('Guest Location');
 SELECT
@@ -38,7 +38,7 @@ FROM insert_location_details('Batticaloa');
 SELECT
 FROM insert_location_details('Kurunegala');
 SELECT
-FROM insert_location_details('Matara');
+FROM insert_location_details('Matara'); --10
 
 
 -- Insert the roles required to do the jobs
@@ -71,16 +71,16 @@ FROM insert_user_details('Guest', 'User', 6, 'GUEST USER', 'UNKNOWN', 2, 'Guest 
 
 
 -- Sample purchase Details
-SELECT FROM insert_purchase_details(1, 56.9, 2, 3, 5, 1);
-SELECT FROM insert_purchase_details(1, 56.9, 5, 3, 2, 6);
-SELECT FROM insert_purchase_details(1, 56.9, 1, 3, 4, 3);
-SELECT FROM insert_purchase_details(1, 56.9, 3, 3, 9, 10);
-SELECT FROM insert_purchase_details(1, 56.9, 4, 3, 8, 4);
-SELECT FROM insert_purchase_details(1, 56.9, 1, 3, 6, 9);
-SELECT FROM insert_purchase_details(1, 56.9, 5, 3, 3, 2);
-SELECT FROM insert_purchase_details(1, 56.9, 3, 3, 7, 7);
-SELECT FROM insert_purchase_details(1, 56.9, 2, 3, 1, 8);
-SELECT FROM insert_purchase_details(1, 56.9, 4, 3, 10, 5);
+SELECT FROM insert_purchase_details(1, 56.9, 2, 4, 5, 1);
+SELECT FROM insert_purchase_details(1, 56.9, 5, 4, 2, 6);
+SELECT FROM insert_purchase_details(1, 56.9, 1, 4, 4, 3);
+SELECT FROM insert_purchase_details(1, 56.9, 3, 4, 9, 10);
+SELECT FROM insert_purchase_details(1, 56.9, 4, 4, 8, 4);
+SELECT FROM insert_purchase_details(1, 56.9, 1, 4, 6, 9);
+SELECT FROM insert_purchase_details(1, 56.9, 5, 4, 3, 2);
+SELECT FROM insert_purchase_details(1, 56.9, 3, 4, 7, 7);
+SELECT FROM insert_purchase_details(1, 56.9, 2, 4, 1, 8);
+SELECT FROM insert_purchase_details(1, 56.9, 4, 4, 10, 5);
 
 
 -- Sample Sales Details

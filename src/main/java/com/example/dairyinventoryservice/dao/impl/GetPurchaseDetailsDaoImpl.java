@@ -161,6 +161,8 @@ public class GetPurchaseDetailsDaoImpl implements GetPurchaseDetailsDao {
                     getItemDetailsDto.setItemName(resultSet.getString("ritemname"));
                     getItemDetailsDto.setItemId(resultSet.getInt("ritemid"));
                     getItemDetailsDto.setItemExpiryDuration(resultSet.getString("ritemexpiryduration"));
+                    getItemDetailsDto.setMaxPurchaseItemPrice(resultSet.getBigDecimal(4));
+                    getItemDetailsDto.setMaxSellingItemPrice(resultSet.getBigDecimal(5));
                     getItemDetailsDtoList.add(getItemDetailsDto);
                 }
                 generalResponse.setData(getItemDetailsDtoList);
