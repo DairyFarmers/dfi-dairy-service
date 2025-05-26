@@ -60,6 +60,37 @@ public class GetPurchaseDetailsDaoImpl implements GetPurchaseDetailsDao {
     }
 
     @Override
+    public UserDetailsResponseDto getUserImportantDetails(String emailId){
+        UserDetailsResponseDto userDetailsResponseDto = null;
+
+
+        try (Connection connection = DataSourceUtils.getConnection(Objects.requireNonNull(jdbcTemplate.getDataSource()));
+             CallableStatement callableStatement = connection.prepareCall(DaoConstant.GET_USER_DETAIL_BY_EMAIL_ID)) {
+
+            callableStatement.setString(1, emailId);
+
+            ResultSet resultSet = callableStatement.executeQuery();
+
+            if (resultSet.next()) {
+
+                    userDetailsResponseDto = new UserDetailsResponseDto();
+
+                    userDetailsResponseDto.setFullName(resultSet.getString("lfullname"));
+                    userDetailsResponseDto.setUserRoleName(resultSet.getString("luserrole"));
+                    userDetailsResponseDto.setLocationName(resultSet.getString("luserlocation"));
+                    userDetailsResponseDto.setEmail(emailId);
+
+            }
+
+        } catch (SQLException e) {
+            log.error("---------------------------------------------{}", e.getMessage());
+            return userDetailsResponseDto;
+
+        }
+        return userDetailsResponseDto;
+    }
+
+    @Override
     public GeneralResponse getPurchaseDetails(String startDate, String endDate) {
         GeneralResponse generalResponse = new GeneralResponse();
         GetPurchaseDetailsResponse getPurchaseDetailsResponse = null;

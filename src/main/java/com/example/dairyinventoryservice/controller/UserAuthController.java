@@ -1,5 +1,6 @@
 package com.example.dairyinventoryservice.controller;
 
+import com.example.dairyinventoryservice.dao.GetPurchaseDetailsDao;
 import com.example.dairyinventoryservice.dto.request.InsertUserDto;
 import com.example.dairyinventoryservice.dto.request.PasswordChangeDto;
 import com.example.dairyinventoryservice.dto.request.UserAuthRequestDto;
@@ -28,6 +29,9 @@ public class UserAuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private GetPurchaseDetailsDao getPurchaseDetailsDao;
+
     @PostMapping("/signUp")
     public GeneralResponse login(@RequestBody InsertUserDto insertUserDto) {
         GeneralResponse generalResponse = new GeneralResponse();
@@ -46,6 +50,11 @@ public class UserAuthController {
             log.info(user.getEmail());
             String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
             authResponseDto.setToken(token);
+            authResponseDto.setRoleId(user.getRole());
+            authResponseDto.setFullName(getPurchaseDetailsDao.getUserImportantDetails(user.getEmail()).getFullName());
+            authResponseDto.setEmail(user.getEmail());
+            authResponseDto.setUserRoleName(getPurchaseDetailsDao.getUserImportantDetails(user.getEmail()).getLocationName());
+            authResponseDto.setLocationName(getPurchaseDetailsDao.getUserImportantDetails(user.getEmail()).getLocationName());
 
             generalResponse.setData(authResponseDto);
             generalResponse.setRes(true);
