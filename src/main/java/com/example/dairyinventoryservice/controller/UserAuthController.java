@@ -53,7 +53,7 @@ public class UserAuthController {
             authResponseDto.setRoleId(user.getRole());
             authResponseDto.setFullName(getPurchaseDetailsDao.getUserImportantDetails(user.getEmail()).getFullName());
             authResponseDto.setEmail(user.getEmail());
-            authResponseDto.setUserRoleName(getPurchaseDetailsDao.getUserImportantDetails(user.getEmail()).getLocationName());
+            authResponseDto.setUserRoleName(getPurchaseDetailsDao.getUserImportantDetails(user.getEmail()).getUserRoleName());
             authResponseDto.setLocationName(getPurchaseDetailsDao.getUserImportantDetails(user.getEmail()).getLocationName());
 
             generalResponse.setData(authResponseDto);
