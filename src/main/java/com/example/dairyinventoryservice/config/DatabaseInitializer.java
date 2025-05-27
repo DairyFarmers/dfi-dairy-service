@@ -18,6 +18,7 @@ public class DatabaseInitializer {
         populator.addScript(new ClassPathResource("functions/PostInventoryDetails.sql"));
         populator.addScript(new ClassPathResource("functions/GetInventoryDetails.sql"));
         populator.addScript(new ClassPathResource("functions/CreateRequiredDataToCheckSqlFunctions.sql"));
+        populator.addScript(new ClassPathResource("functions/ChatMessage.sql"));
 
         DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dataSource);
