@@ -37,6 +37,7 @@ C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example
 C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\dto\response\InventoryRevenueDto.java
 C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\dto\response\SalesRepRevenueDto.java
 C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\dto\response\UserAuthResponseDto.java
+C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\dto\response\UserDetailsResponseDto.java
 C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\service\GetPurchaseDetailsService.java
 C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\service\impl\GetPurchaseDetailsServiceImpl.java
 C:\Users\Anuruththan\Downloads\dairy-inventory-service\src\main\java\com\example\dairyinventoryservice\service\impl\InsertPurchaseDetailsServiceImpl.java

@@ -17,6 +17,7 @@ com\example\dairyinventoryservice\dto\response\GetItemDetailsDto.class
 com\example\dairyinventoryservice\dao\UserAuthDao.class
 com\example\dairyinventoryservice\dto\request\InsertUserDto.class
 com\example\dairyinventoryservice\controller\FarmerController.class
+com\example\dairyinventoryservice\dto\response\UserDetailsResponseDto.class
 com\example\dairyinventoryservice\config\OpenApiConfig.class
 com\example\dairyinventoryservice\dto\response\InventoryRevenueDto.class
 com\example\dairyinventoryservice\controller\InventoryManagerController.class

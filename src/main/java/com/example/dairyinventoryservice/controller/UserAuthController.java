@@ -36,8 +36,10 @@ public class UserAuthController {
     public GeneralResponse login(@RequestBody InsertUserDto insertUserDto) {
         GeneralResponse generalResponse = new GeneralResponse();
         generalResponse = userAuthService.insertNewUser(insertUserDto);
-        return generalResponse;
+        return generalResponse; //get otp and send through the email
     }
+
+    //add the verified email by the user
 
     @PostMapping("/login")
     public GeneralResponse login(@RequestBody UserAuthRequestDto userAuthRequestDto) {
@@ -53,7 +55,7 @@ public class UserAuthController {
             authResponseDto.setRoleId(user.getRole());
             authResponseDto.setFullName(getPurchaseDetailsDao.getUserImportantDetails(user.getEmail()).getFullName());
             authResponseDto.setEmail(user.getEmail());
-            authResponseDto.setUserRoleName(getPurchaseDetailsDao.getUserImportantDetails(user.getEmail()).getLocationName());
+            authResponseDto.setUserRoleName(getPurchaseDetailsDao.getUserImportantDetails(user.getEmail()).getUserRoleName());
             authResponseDto.setLocationName(getPurchaseDetailsDao.getUserImportantDetails(user.getEmail()).getLocationName());
 
             generalResponse.setData(authResponseDto);

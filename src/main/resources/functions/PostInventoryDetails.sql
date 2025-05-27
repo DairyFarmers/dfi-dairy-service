@@ -601,12 +601,18 @@ CREATE OR REPLACE FUNCTION change_password(
 AS
 '
     DECLARE
-        lEmail    CHARACTER VARYING;
+        lEmail    CHARACTER VARYING := null;
         lPassword CHARACTER VARYING := null;
     BEGIN
-        SELECT password
-        into lPassword
+
+        SELECT password,
+               email
+        into lPassword, lEmail
         FROM get_user_auth_by_email(pUserEmail);
+
+        IF lEmail != puseremail OR lEmail IS NULL THEN
+            RAISE EXCEPTION ''Invalid Email-ID'';
+        END IF;
         IF lPassword = ENCODE(DIGEST(pNewPassword, ''sha256''), ''hex'') THEN
             RAISE EXCEPTION ''Old password and New password are same.'';
         END IF;
