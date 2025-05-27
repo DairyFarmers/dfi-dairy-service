@@ -1,18 +1,18 @@
 package com.example.dairyinventoryservice.service.impl;
 
-import com.example.dairyinventoryservice.dao.InsertPurchaseDetailsDao;
+import com.example.dairyinventoryservice.dao.PostPurchaseDetailsDao;
 import com.example.dairyinventoryservice.dto.request.*;
 import com.example.dairyinventoryservice.dto.response.GeneralResponse;
-import com.example.dairyinventoryservice.service.InsertPurchaseDetailsService;
+import com.example.dairyinventoryservice.service.PostPurchaseDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service
-public class InsertPurchaseDetailsServiceImpl implements InsertPurchaseDetailsService {
+public class InsertPurchaseDetailsServiceImpl implements PostPurchaseDetailsService {
 
     @Autowired
-    private InsertPurchaseDetailsDao insertPurchaseDetailsDao;
+    private PostPurchaseDetailsDao insertPurchaseDetailsDao;
 
     @Override
     public GeneralResponse addPurchaseDetails(PurchaseDetailDto insertPurchase){
@@ -48,5 +48,7 @@ public class InsertPurchaseDetailsServiceImpl implements InsertPurchaseDetailsSe
     public GeneralResponse addNewSalesDetails(SalesDetailsDto insertSalesDetails){
         return insertPurchaseDetailsDao.addNewSalesDetails(insertSalesDetails);
     }
+
+
 
 }

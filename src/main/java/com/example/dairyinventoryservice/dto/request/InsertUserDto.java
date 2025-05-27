@@ -12,8 +12,9 @@ import lombok.Setter;
 public class InsertUserDto {
     private String firstName;
     private String lastName;
-    private String userRoleId;
+    private int userRoleId;
     private String email;
     private String phoneNumber;
-    private String locationId;
+    private int locationId;
+    private String password;
 }
