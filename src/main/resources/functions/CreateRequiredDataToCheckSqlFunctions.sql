@@ -84,13 +84,13 @@ SELECT FROM insert_purchase_details(1, 56.9, 4, 4, 10, 5);
 
 
 -- Sample Sales Details
-SELECT FROM insert_sales_details(1, 8, 7, 89.79, 3, false);
-SELECT FROM insert_sales_details(2, 3, 7, 70.18, 3, false);
-SELECT FROM insert_sales_details(1, 2, 4, 79.57, 3, false);
-SELECT FROM insert_sales_details(5, 3, 3, 80.55, 3, false);
-SELECT FROM insert_sales_details(3, 1, 2, 76.60, 3, false);
-SELECT FROM insert_sales_details(2, 4, 8, 92.31, 3, false);
-SELECT FROM insert_sales_details(4, 1, 4, 84.00, 3, false);
-SELECT FROM insert_sales_details(1, 1, 6, 59.28, 3, false);
-SELECT FROM insert_sales_details(3, 2, 5, 94.11, 3, false);
-SELECT FROM insert_sales_details(5, 2, 10, 85.76, 3, false);
+SELECT FROM insert_sales_details(1, 8, 7, 89.79, 5, true);
+SELECT FROM insert_sales_details(2, 3, 7, 70.18, 5, true);
+SELECT FROM insert_sales_details(1, 2, 4, 79.57, 5, true);
+SELECT FROM insert_sales_details(5, 3, 3, 80.55, 5, true);
+SELECT FROM insert_sales_details(3, 1, 2, 76.60, 5, true);
+SELECT FROM insert_sales_details(2, 4, 8, 92.31, 5, true);
+SELECT FROM insert_sales_details(4, 1, 4, 84.00, 5, true);
+SELECT FROM insert_sales_details(1, 1, 6, 59.28, 5, true);
+SELECT FROM insert_sales_details(3, 2, 5, 94.11, 5, true);
+SELECT FROM insert_sales_details(5, 2, 10, 85.76, 5, true);
