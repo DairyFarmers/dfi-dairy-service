@@ -26,6 +26,7 @@ com\example\dairyinventoryservice\dto\request\LocationDto.class
 com\example\dairyinventoryservice\controller\SalesRepController.class
 com\example\dairyinventoryservice\dto\request\PurchaseDetailDto.class
 com\example\dairyinventoryservice\dto\response\GetItemAvailability.class
+com\example\dairyinventoryservice\util\GenerateOtpUtil.class
 com\example\dairyinventoryservice\DairyInventoryServiceApplication.class
 com\example\dairyinventoryservice\util\PasswordUtils.class
 com\example\dairyinventoryservice\service\impl\UserAuthServiceImpl.class
