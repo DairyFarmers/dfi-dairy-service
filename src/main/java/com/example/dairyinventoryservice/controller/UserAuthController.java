@@ -36,8 +36,10 @@ public class UserAuthController {
     public GeneralResponse login(@RequestBody InsertUserDto insertUserDto) {
         GeneralResponse generalResponse = new GeneralResponse();
         generalResponse = userAuthService.insertNewUser(insertUserDto);
-        return generalResponse;
+        return generalResponse; //get otp and send through the email
     }
+
+    //add the verified email by the user
 
     @PostMapping("/login")
     public GeneralResponse login(@RequestBody UserAuthRequestDto userAuthRequestDto) {
