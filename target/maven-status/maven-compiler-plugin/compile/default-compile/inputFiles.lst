@@ -2,8 +2,10 @@ E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\con
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\config\JwtAuthenticationFilter.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\config\OpenApiConfig.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\config\SecurityConfig.java
+E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\config\WebSocketConfig.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\controller\AdminController.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\controller\B2bController.java
+E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\controller\ChatController.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\controller\FarmerController.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\controller\InventoryManagerController.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\controller\SalesRepController.java
@@ -16,6 +18,8 @@ E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\dao
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\dao\impl\UserAuthDaoImpl.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\dao\PostPurchaseDetailsDao.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\dao\UserAuthDao.java
+E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\data\Constants.java
+E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\dto\ChatMessage.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\dto\request\InsertUserDto.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\dto\request\ItemsDetailsDto.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\dto\request\LocationDto.java
@@ -38,7 +42,12 @@ E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\dto
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\dto\response\SalesRepRevenueDto.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\dto\response\UserAuthResponseDto.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\dto\response\UserDetailsResponseDto.java
+E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\model\ChatMessageModel.java
+E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\repository\ChatMessageRepository.java
+E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\repository\impl\ChatMessageRepositoryImpl.java
+E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\service\ChatMessageService.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\service\GetPurchaseDetailsService.java
+E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\service\impl\ChatMessageServiceImpl.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\service\impl\GetPurchaseDetailsServiceImpl.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\service\impl\InsertPurchaseDetailsServiceImpl.java
 E:\VSC\DFI\dfi-dairy-service\src\main\java\com\example\dairyinventoryservice\service\impl\UserAuthServiceImpl.java
