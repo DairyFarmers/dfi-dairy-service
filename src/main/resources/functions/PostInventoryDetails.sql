@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS "ItemsDetails"
     "ItemName"              CHARACTER VARYING,
     "DefaultExpiryDuration" CHARACTER VARYING,
     "MaxPurchasePrice"      NUMERIC(10, 2),
-    "MaxSellingPrice"       NUMERIC(10, 2)
+    "MaxSellingPrice"       NUMERIC(10, 2),
+    "MaxSellingUnitPriceForB2B" NUMERIC(10,2)
 );
 
 --Create User Role  Table
@@ -92,6 +93,21 @@ CREATE TABLE IF NOT EXISTS "B2bPurchaseDetails"
 
 );
 
+
+-- Creating a table that replicates farmers sales
+CREATE TABLE IF NOT EXISTS "FarmerSalesDetails"
+(
+    "FarmerSalesDetailId" BIGSERIAL PRIMARY KEY,
+    "SoldOn"              TIMESTAMP,
+    "EmailId"             CHARACTER VARYING,
+    "SoldUnitCount"       BIGINT,
+    "PurchaseDetailId"    CHARACTER VARYING,
+    "Revenue"             NUMERIC(10, 2),
+    "ItemName"            CHARACTER VARYING,
+    "LocationName"        CHARACTER VARYING,
+    FOREIGN KEY ("PurchaseDetailId") REFERENCES "PurchaseDetails" ("PurchaseId"),
+    FOREIGN KEY ("EmailId") REFERENCES "UserDetails" ("E-mail")
+);
 -- 2. Create a sequence to having a auto increment number
 CREATE SEQUENCE IF NOT EXISTS purchase_id_seq;
 CREATE SEQUENCE IF NOT EXISTS sales_id_seq;
@@ -189,7 +205,7 @@ CREATE OR REPLACE FUNCTION insert_purchase_details(
 AS
 '
     DECLARE
-        lExpiryDate       TIMESTAMP;
+        lExpiryDate       CHARACTER VARYING;
         lCurrentDateTime  TIMESTAMP := current_timestamp::timestamp;
         lPurchaseDetailId CHARACTER VARYING;
         lSalesPrice       NUMERIC(10, 2);
@@ -199,9 +215,10 @@ AS
         lSellerEmail      CHARACTER VARYING;
         lLocationName     CHARACTER VARYING;
     BEGIN
-        SELECT "rExpiryDate"
+        SELECT "DefaultExpiryDuration"
         into lExpiryDate
-        FROM get_expiry_date(pItemId);
+        FROM "ItemsDetails"
+        WHERE "ItemId" = pitemid;
 
         IF pInsertedBy IS NULL OR pPurchasePrice IS NULL OR pItemId IS NULL OR pSellerId IS NULL THEN
             RAISE EXCEPTION ''Invalid input: Some required fields are null'';
@@ -213,7 +230,8 @@ AS
 
         INSERT INTO "PurchaseDetails"("CreatedDate", "InsertedBy", "PurchasePrice", "ItemId", "ExpiryDate", "SellerId",
                                       "ItemCount", "InventoryLocationId")
-        VALUES (lCurrentDateTime, pInsertedBy, pPurchasePrice, pItemId, lExpiryDate::timestamp, pSellerId,
+        VALUES (lCurrentDateTime, pInsertedBy, pPurchasePrice, pItemId, lCurrentDateTime + lExpiryDate::INTERVAL,
+                pSellerId,
                 pItemCount, plocationId);
 
         SELECT "PurchaseId",
@@ -245,7 +263,8 @@ AS
         WHEN OTHERS THEN
             "rDataUpdated" := ''Issue In Inserting The Purchase Details'';
             RETURN QUERY SELECT "rDataUpdated";
-    END;'
+END;
+'
 ;
 
 --To insert the User Role
@@ -295,7 +314,8 @@ CREATE OR REPLACE FUNCTION insert_item_details(
     pItemName CHARACTER VARYING,
     pDefaultExpiryDuration CHARACTER VARYING,
     pMaxPurchasePrice NUMERIC(10, 2),
-    pMaxSellingPrice NUMERIC(10, 2)
+    pMaxSellingPrice NUMERIC(10, 2),
+    pMaxSellingUnitPriceForB2B NUMERIC(10, 2)
 )
     RETURNS TABLE
             (
@@ -320,8 +340,8 @@ AS
             RAISE EXCEPTION ''Item already exists in the database'';
         END IF;
 
-        INSERT INTO "ItemsDetails"("ItemName", "DefaultExpiryDuration", "MaxPurchasePrice", "MaxSellingPrice")
-        VALUES (pItemName, pDefaultExpiryDuration, pMaxPurchasePrice, pMaxSellingPrice);
+        INSERT INTO "ItemsDetails"("ItemName", "DefaultExpiryDuration", "MaxPurchasePrice", "MaxSellingPrice", "MaxSellingUnitPriceForB2B")
+        VALUES (pItemName, pDefaultExpiryDuration, pMaxPurchasePrice, pMaxSellingPrice, pMaxSellingUnitPriceForB2B);
 
         "rDataUpdated" := ''Item Details Successfully Inserted'';
         RETURN QUERY SELECT "rDataUpdated";
@@ -489,7 +509,7 @@ AS
 -- Insert sales details, IF it's b2b then replicate in B2b purchase details table
 CREATE OR REPLACE FUNCTION insert_sales_details(
     pItemId INT,
-    pItemCount INT,
+    pItemCount BIGINT,
     pInventoryLocationId INT,
     pSalesPrice DECIMAL(10, 2),
     pBuyerId integer,

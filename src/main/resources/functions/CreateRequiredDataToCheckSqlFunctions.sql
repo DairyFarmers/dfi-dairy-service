@@ -1,18 +1,18 @@
 --Insert the products to
 SELECT
-FROM insert_item_details('Panner', '30 Days', 100, 205.56); --1
+FROM insert_item_details('Panner', '30 Days', 100, 205.56, 150); --1
 SELECT
-FROM insert_item_details('Curd', '10 Days', 256, 300);
+FROM insert_item_details('Curd', '10 Days', 256, 300, 280);
 SELECT
-FROM insert_item_details('Milk', '02 Days', 654, 700);
+FROM insert_item_details('Milk', '02 Days', 654, 700, 690);
 SELECT
-FROM insert_item_details('Milk Chocolate', '40 Days', 865, 900);
+FROM insert_item_details('Milk Chocolate', '40 Days', 865, 900, 880);
 SELECT
-FROM insert_item_details('Gee', '30 Days', 564, 600);
+FROM insert_item_details('Gee', '30 Days', 564, 600, 580);
 SELECT
-FROM insert_item_details('Cheese', '100 Days', 568.56, 986.56);
+FROM insert_item_details('Cheese', '100 Days', 568.56, 986.56, 700);
 SELECT
-FROM insert_item_details('Yogut', '70 Days', 456.35, 753.65); --10
+FROM insert_item_details('Yogut', '70 Days', 456.35, 753.65, 600); --10
 
 
 -- Insert the cities for the inventory/ shops
@@ -94,3 +94,23 @@ SELECT FROM insert_sales_details(4, 1, 4, 84.00, 5, true);
 SELECT FROM insert_sales_details(1, 1, 6, 59.28, 5, true);
 SELECT FROM insert_sales_details(3, 2, 5, 94.11, 5, true);
 SELECT FROM insert_sales_details(5, 2, 10, 85.76, 5, true);
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- B2B Status Details
+INSERT INTO "B2bRequestStatus"("B2bRequestStatusName")
+VALUES ('Request can be processed by the sellers in the same location'); ---------------------------------------------------------------------------1
+INSERT INTO "B2bRequestStatus"("B2bRequestStatusName")
+VALUES ('Request can not be processed low price quotation');----------------------------------------------------------------------------------------2
+INSERT INTO "B2bRequestStatus"("B2bRequestStatusName")
+VALUES ('Request can be processed by getting from our organization distributor'); ------------------------------------------------------------------3
+INSERT INTO "B2bRequestStatus"("B2bRequestStatusName")
+VALUES ('Request Completed'); ----------------------------------------------------------------------------------------------------------------------4
+INSERT INTO "B2bRequestStatus"("B2bRequestStatusName")
+VALUES ('Request Distributed to the farmers under the organization'); ------------------------------------------------------------------------------5
+INSERT INTO "B2bRequestStatus"("B2bRequestStatusName")
+VALUES ('Request can not be done by the organization'); --------------------------------------------------------------------------------------------6
+INSERT INTO "B2bRequestStatus"("B2bRequestStatusName")
+VALUES ('Request is processing'); ------------------------------------------------------------------------------------------------------------------7
+INSERT INTO "B2bRequestStatus"("B2bRequestStatusName")
+VALUES ('Request is cancelled by B2b'); ------------------------------------------------------------------------------------------------------------8
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
