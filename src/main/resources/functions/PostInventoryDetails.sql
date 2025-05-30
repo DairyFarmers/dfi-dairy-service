@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS "ItemsDetails"
     "ItemName"              CHARACTER VARYING,
     "DefaultExpiryDuration" CHARACTER VARYING,
     "MaxPurchasePrice"      NUMERIC(10, 2),
-    "MaxSellingPrice"       NUMERIC(10, 2)
+    "MaxSellingPrice"       NUMERIC(10, 2),
+    "MaxSellingUnitPriceForB2B" NUMERIC(10,2)
 );
 
 --Create User Role  Table
@@ -60,6 +61,39 @@ CREATE TABLE IF NOT EXISTS "PurchaseDetails"
     FOREIGN KEY ("InventoryLocationId") REFERENCES "LocationDetails" ("LocationId")
 );
 
+
+-- Create Sales Details
+CREATE TABLE IF NOT EXISTS "SalesDetails"
+(
+    "SalesDetailId"       VARCHAR(30) PRIMARY KEY NOT NULL,
+    "CreatedDate"         TIMESTAMP,
+    "SalesPrice"          DECIMAL(10, 2),
+    "ItemId"              INT,
+    "ItemCount"           INT                     NOT NULL,
+    "InventoryLocationId" INT                     NOT NULL,
+    "BuyerID"             INT,
+    "IsB2B"               BOOLEAN,
+    FOREIGN KEY ("ItemId") REFERENCES "ItemsDetails" ("ItemId"),
+    FOREIGN KEY ("InventoryLocationId") REFERENCES "LocationDetails" ("LocationId")
+);
+
+-- Use  this table to store the entire b2b purchase details
+CREATE TABLE IF NOT EXISTS "B2bPurchaseDetails"
+(
+    "B2bPurchaseDetailId" BIGSERIAL PRIMARY KEY,
+    "PurchasedOn"         TIMESTAMP,
+    "EmailId"             CHARACTER VARYING,
+    "SoldUnitCount"       BIGINT,
+    "SalesDetailId"       VARCHAR,
+    "PurchasePrice"       BIGINT,
+    "ItemName"            CHARACTER VARYING,
+    "LocationName"        CHARACTER VARYING,
+    FOREIGN KEY ("SalesDetailId") REFERENCES "SalesDetails" ("SalesDetailId"),
+    FOREIGN KEY ("EmailId") REFERENCES "UserDetails" ("E-mail")
+
+);
+
+
 -- Creating a table that replicates farmers sales
 CREATE TABLE IF NOT EXISTS "FarmerSalesDetails"
 (
@@ -74,24 +108,6 @@ CREATE TABLE IF NOT EXISTS "FarmerSalesDetails"
     FOREIGN KEY ("PurchaseDetailId") REFERENCES "PurchaseDetails" ("PurchaseId"),
     FOREIGN KEY ("EmailId") REFERENCES "UserDetails" ("E-mail")
 );
-
-
--- Create Sales Details
-CREATE TABLE IF NOT EXISTS "SalesDetails"
-(
-    "SalesDetailId"       VARCHAR(30) PRIMARY KEY NOT NULL,
-    "CreatedDate"         TIMESTAMP,
-    "SalesPrice"          DECIMAL(10, 2),
-    "ItemId"              INT,
-    "ItemCount"           INT                     NOT NULL,
-    "InventoryLocationId" INT                     NOT NULL,
-    "SellerId"            INT,
-    "IsB2B"               BOOLEAN,
-    FOREIGN KEY ("ItemId") REFERENCES "ItemsDetails" ("ItemId"),
-    FOREIGN KEY ("InventoryLocationId") REFERENCES "LocationDetails" ("LocationId")
-);
-
-
 -- 2. Create a sequence to having a auto increment number
 CREATE SEQUENCE IF NOT EXISTS purchase_id_seq;
 CREATE SEQUENCE IF NOT EXISTS sales_id_seq;
@@ -189,7 +205,7 @@ CREATE OR REPLACE FUNCTION insert_purchase_details(
 AS
 '
     DECLARE
-        lExpiryDate       TIMESTAMP;
+        lExpiryDate       CHARACTER VARYING;
         lCurrentDateTime  TIMESTAMP := current_timestamp::timestamp;
         lPurchaseDetailId CHARACTER VARYING;
         lSalesPrice       NUMERIC(10, 2);
@@ -199,9 +215,10 @@ AS
         lSellerEmail      CHARACTER VARYING;
         lLocationName     CHARACTER VARYING;
     BEGIN
-        SELECT "rExpiryDate"
+        SELECT "DefaultExpiryDuration"
         into lExpiryDate
-        FROM get_expiry_date(pItemId);
+        FROM "ItemsDetails"
+        WHERE "ItemId" = pitemid;
 
         IF pInsertedBy IS NULL OR pPurchasePrice IS NULL OR pItemId IS NULL OR pSellerId IS NULL THEN
             RAISE EXCEPTION ''Invalid input: Some required fields are null'';
@@ -213,7 +230,8 @@ AS
 
         INSERT INTO "PurchaseDetails"("CreatedDate", "InsertedBy", "PurchasePrice", "ItemId", "ExpiryDate", "SellerId",
                                       "ItemCount", "InventoryLocationId")
-        VALUES (lCurrentDateTime, pInsertedBy, pPurchasePrice, pItemId, lExpiryDate::timestamp, pSellerId,
+        VALUES (lCurrentDateTime, pInsertedBy, pPurchasePrice, pItemId, lCurrentDateTime + lExpiryDate::INTERVAL,
+                pSellerId,
                 pItemCount, plocationId);
 
         SELECT "PurchaseId",
@@ -245,7 +263,12 @@ AS
         WHEN OTHERS THEN
             "rDataUpdated" := ''Issue In Inserting The Purchase Details'';
             RETURN QUERY SELECT "rDataUpdated";
-    END;'
+<<<<<<< HEAD
+    END;
+=======
+END;
+>>>>>>> f5600fd7a32d36c9528a514e095aa570c6f5e297
+'
 ;
 
 --To insert the User Role
@@ -295,7 +318,8 @@ CREATE OR REPLACE FUNCTION insert_item_details(
     pItemName CHARACTER VARYING,
     pDefaultExpiryDuration CHARACTER VARYING,
     pMaxPurchasePrice NUMERIC(10, 2),
-    pMaxSellingPrice NUMERIC(10, 2)
+    pMaxSellingPrice NUMERIC(10, 2),
+    pMaxSellingUnitPriceForB2B NUMERIC(10, 2)
 )
     RETURNS TABLE
             (
@@ -320,8 +344,8 @@ AS
             RAISE EXCEPTION ''Item already exists in the database'';
         END IF;
 
-        INSERT INTO "ItemsDetails"("ItemName", "DefaultExpiryDuration", "MaxPurchasePrice", "MaxSellingPrice")
-        VALUES (pItemName, pDefaultExpiryDuration, pMaxPurchasePrice, pMaxSellingPrice);
+        INSERT INTO "ItemsDetails"("ItemName", "DefaultExpiryDuration", "MaxPurchasePrice", "MaxSellingPrice", "MaxSellingUnitPriceForB2B")
+        VALUES (pItemName, pDefaultExpiryDuration, pMaxPurchasePrice, pMaxSellingPrice, pMaxSellingUnitPriceForB2B);
 
         "rDataUpdated" := ''Item Details Successfully Inserted'';
         RETURN QUERY SELECT "rDataUpdated";
@@ -486,13 +510,13 @@ AS
     END;
 ';
 
--- Create Sales Details
+-- Insert sales details, IF it's b2b then replicate in B2b purchase details table
 CREATE OR REPLACE FUNCTION insert_sales_details(
     pItemId INT,
-    pItemCount INT,
+    pItemCount BIGINT,
     pInventoryLocationId INT,
     pSalesPrice DECIMAL(10, 2),
-    pSellerId integer,
+    pBuyerId integer,
     pIsb2b boolean
 )
     RETURNS TABLE
@@ -503,10 +527,15 @@ CREATE OR REPLACE FUNCTION insert_sales_details(
 AS
 '
     DECLARE
-        lRemainingToDeduct BIGINT := pItemCount::BIGINT;
+        lRemainingToDeduct BIGINT    := pItemCount::BIGINT;
         lPurchaseRow       RECORD;
         lTotalItemCount    BIGINT;
         resultMsg          CHARACTER VARYING;
+        lCurrentDateTime   TIMESTAMP := current_timestamp;
+        lEmailId           CHARACTER VARYING;
+        lItemName          CHARACTER VARYING;
+        lLocationName      CHARACTER VARYING;
+        lSalesDetailId     VARCHAR(30);
     BEGIN
         -- Get total available item count for the product in the specified location
         SELECT SUM("ItemCount")
@@ -549,9 +578,38 @@ AS
 
             -- Insert into SalesDetails
             INSERT INTO "SalesDetails" ("CreatedDate", "SalesPrice", "ItemId", "ItemCount", "InventoryLocationId",
-                                        "SellerId", "IsB2B")
-            VALUES (CURRENT_TIMESTAMP, psalesprice, pitemid, pitemcount::BIGINT, pinventorylocationid, pSellerID,
+                                        "BuyerID", "IsB2B")
+            VALUES (lCurrentDateTime, psalesprice, pitemid, pitemcount::BIGINT, pinventorylocationid, pBuyerId,
                     pIsB2b);
+
+            IF pIsb2b IS TRUE THEN
+                SELECT ID."ItemName",
+                       LD."LocationName",
+                       UD."E-mail",
+                       "SalesDetailId"
+                into lItemName, lLocationName, lEmailId, lSalesDetailId
+                FROM "SalesDetails" SD
+                         LEFT JOIN "ItemsDetails" ID ON SD."ItemId" = ID."ItemId"
+                         LEFT JOIN "UserDetails" UD on UD."UserDetailId" = SD."BuyerID"
+                         LEFT JOIN "LocationDetails" LD on LD."LocationId" = SD."InventoryLocationId"
+                WHERE "CreatedDate" = lCurrentDateTime;
+
+                INSERT INTO "B2bPurchaseDetails"("PurchasedOn",
+                                                 "EmailId",
+                                                 "SoldUnitCount",
+                                                 "SalesDetailId",
+                                                 "PurchasePrice",
+                                                 "ItemName",
+                                                 "LocationName")
+
+                VALUES (lCurrentDateTime,
+                        lEmailId,
+                        pItemCount,
+                        lSalesDetailId,
+                        pSalesPrice,
+                        lItemName,
+                        lLocationName);
+            END IF;
 
             resultMsg := ''Sales Data Updated''::CHARACTER VARYING;
         ELSE
@@ -613,6 +671,7 @@ AS
         IF lEmail != puseremail OR lEmail IS NULL THEN
             RAISE EXCEPTION ''Invalid Email-ID'';
         END IF;
+
         IF lPassword = ENCODE(DIGEST(pNewPassword, ''sha256''), ''hex'') THEN
             RAISE EXCEPTION ''Old password and New password are same.'';
         END IF;

@@ -15,8 +15,10 @@ public class DatabaseInitializer {
     public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("functions/DropTablesOrFunctionsIfExists.sql"));
+//        populator.addScript(new ClassPathResource("functions/FarmerFunctions.sql"));
         populator.addScript(new ClassPathResource("functions/PostInventoryDetails.sql"));
         populator.addScript(new ClassPathResource("functions/GetInventoryDetails.sql"));
+        populator.addScript(new ClassPathResource("functions/B2bFunctions.sql"));
         populator.addScript(new ClassPathResource("functions/CreateRequiredDataToCheckSqlFunctions.sql"));
         populator.addScript(new ClassPathResource("functions/ChatMessage.sql"));
 

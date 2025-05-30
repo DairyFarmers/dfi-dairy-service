@@ -1,7 +1,7 @@
 package com.example.dairyinventoryservice.service;
 
-import com.example.dairyinventoryservice.dto.request.*;
-import com.example.dairyinventoryservice.dto.response.GeneralResponse;
+import com.example.dairyinventoryservice.model.dto.request.*;
+import com.example.dairyinventoryservice.model.dto.response.GeneralResponse;
 
 
 public interface PostPurchaseDetailsService {

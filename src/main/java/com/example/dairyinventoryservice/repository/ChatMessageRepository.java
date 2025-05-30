@@ -1,7 +1,7 @@
 package com.example.dairyinventoryservice.repository;
 
 import com.example.dairyinventoryservice.model.ChatMessageModel;
-import com.example.dairyinventoryservice.dto.ChatMessage;
+import com.example.dairyinventoryservice.model.dto.ChatMessage;
 import java.util.List;
 
 public interface ChatMessageRepository {

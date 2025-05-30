@@ -1,10 +1,10 @@
 package com.example.dairyinventoryservice.service.impl;
 
-import com.example.dairyinventoryservice.dao.UserAuthDao;
-import com.example.dairyinventoryservice.dto.request.InsertUserDto;
-import com.example.dairyinventoryservice.dto.request.PasswordChangeDto;
-import com.example.dairyinventoryservice.dto.response.GeneralResponse;
-import com.example.dairyinventoryservice.dto.response.UserAuthResponseDto;
+import com.example.dairyinventoryservice.data.dao.UserAuthDao;
+import com.example.dairyinventoryservice.model.dto.request.InsertUserDto;
+import com.example.dairyinventoryservice.model.dto.request.PasswordChangeDto;
+import com.example.dairyinventoryservice.model.dto.response.GeneralResponse;
+import com.example.dairyinventoryservice.model.dto.response.UserAuthResponseDto;
 import com.example.dairyinventoryservice.service.UserAuthService;
 import com.example.dairyinventoryservice.util.GenerateOtpUtil;
 import com.example.dairyinventoryservice.util.PasswordUtils;

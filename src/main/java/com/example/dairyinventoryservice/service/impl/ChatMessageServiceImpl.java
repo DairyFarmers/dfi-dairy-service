@@ -1,7 +1,7 @@
 package com.example.dairyinventoryservice.service.impl;
 
 import com.example.dairyinventoryservice.model.ChatMessageModel;
-import com.example.dairyinventoryservice.dto.ChatMessage;
+import com.example.dairyinventoryservice.model.dto.ChatMessage;
 import com.example.dairyinventoryservice.service.ChatMessageService;
 import com.example.dairyinventoryservice.repository.ChatMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
