@@ -6,6 +6,7 @@ import com.example.dairyinventoryservice.model.dto.response.GeneralResponse;
 import com.example.dairyinventoryservice.model.dto.response.UserAuthResponseDto;
 
 public interface UserAuthService {
+
     public GeneralResponse insertNewUser(InsertUserDto insertUserDto);
 
     // Add your new service here..........................................................

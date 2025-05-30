@@ -263,7 +263,11 @@ AS
         WHEN OTHERS THEN
             "rDataUpdated" := ''Issue In Inserting The Purchase Details'';
             RETURN QUERY SELECT "rDataUpdated";
+<<<<<<< HEAD
     END;
+=======
+END;
+>>>>>>> f5600fd7a32d36c9528a514e095aa570c6f5e297
 '
 ;
 

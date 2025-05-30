@@ -33,6 +33,7 @@ public class PostPurchaseDetailsDaoImpl implements PostPurchaseDetailsDao {
             callableStatement.setObject(2, itemDto.getItemExpiryDuration(), Types.VARCHAR);
             callableStatement.setBigDecimal(3,itemDto.getMaxPurchaseItemPrice());
             callableStatement.setBigDecimal(4, itemDto.getMaxSellingItemPrice());
+            callableStatement.setBigDecimal(5,itemDto.getMaxUnitPriceForB2b());
 
             ResultSet resultSet = callableStatement.executeQuery();
 

@@ -16,4 +16,5 @@ public class ItemsDetailsDto {
     private String itemExpiryDuration;
     private BigDecimal maxPurchaseItemPrice;
     private BigDecimal maxSellingItemPrice;
+    private BigDecimal maxUnitPriceForB2b;
 }
