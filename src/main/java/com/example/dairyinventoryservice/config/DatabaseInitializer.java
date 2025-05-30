@@ -17,6 +17,7 @@ public class DatabaseInitializer {
         populator.addScript(new ClassPathResource("functions/DropTablesOrFunctionsIfExists.sql"));
         populator.addScript(new ClassPathResource("functions/PostInventoryDetails.sql"));
         populator.addScript(new ClassPathResource("functions/GetInventoryDetails.sql"));
+        populator.addScript(new ClassPathResource("functions/B2bFunctions.sql"));
         populator.addScript(new ClassPathResource("functions/CreateRequiredDataToCheckSqlFunctions.sql"));
         populator.addScript(new ClassPathResource("functions/ChatMessage.sql"));
 

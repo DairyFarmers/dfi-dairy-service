@@ -2,7 +2,7 @@ package com.example.dairyinventoryservice.repository.impl;
 
 import com.example.dairyinventoryservice.model.ChatMessageModel;
 import com.example.dairyinventoryservice.repository.ChatMessageRepository;
-import com.example.dairyinventoryservice.dto.ChatMessage;
+import com.example.dairyinventoryservice.model.dto.ChatMessage;
 import com.example.dairyinventoryservice.data.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

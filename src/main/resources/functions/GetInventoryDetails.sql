@@ -96,7 +96,8 @@ AS
                    "ItemId",
                    "DefaultExpiryDuration",
                    "MaxPurchasePrice",
-                    "MaxSellingPrice"
+                    "MaxSellingPrice",
+                   "MaxSellingUnitPriceForB2B"
             FROM "ItemsDetails";
 
     END;

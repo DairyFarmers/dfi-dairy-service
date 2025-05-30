@@ -19,7 +19,7 @@ public class JwtUtil {
     private int EXPIRATION_TIME;
 
     public String generateToken(String email, Integer role) {
-
+        log.info(SECRET_KEY);
         String token;
         token = Jwts.builder()
                 .setSubject(email)

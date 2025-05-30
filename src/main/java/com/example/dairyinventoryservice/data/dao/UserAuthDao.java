@@ -1,16 +1,14 @@
-package com.example.dairyinventoryservice.service;
+package com.example.dairyinventoryservice.data.dao;
 
 import com.example.dairyinventoryservice.model.dto.request.InsertUserDto;
 import com.example.dairyinventoryservice.model.dto.request.PasswordChangeDto;
 import com.example.dairyinventoryservice.model.dto.response.GeneralResponse;
 import com.example.dairyinventoryservice.model.dto.response.UserAuthResponseDto;
 
-public interface UserAuthService {
+public interface UserAuthDao {
     public GeneralResponse insertNewUser(InsertUserDto insertUserDto);
 
-    // Add your new service here..........................................................
-
-    public UserAuthResponseDto authenticateUser(String email, String password);
+    public UserAuthResponseDto findByEmail(String email);
 
     public GeneralResponse changePassword(PasswordChangeDto passwordChangeDto);
 }

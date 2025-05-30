@@ -1,10 +1,9 @@
-package com.example.dairyinventoryservice.service;
+package com.example.dairyinventoryservice.data.dao;
 
 import com.example.dairyinventoryservice.model.dto.request.*;
 import com.example.dairyinventoryservice.model.dto.response.GeneralResponse;
 
-
-public interface PostPurchaseDetailsService {
+public interface PostPurchaseDetailsDao {
 
     public GeneralResponse addNewUser(InsertUserDto insertUserDto);
 
@@ -16,8 +15,10 @@ public interface PostPurchaseDetailsService {
 
     public GeneralResponse addItem(ItemsDetailsDto itemDto);
 
-    public GeneralResponse addPurchaseDetails(PurchaseDetailDto insertPurchase);
+    public GeneralResponse addNewPurchaseDetails(PurchaseDetailDto insertPurchase);
 
     public GeneralResponse addNewSalesDetails(SalesDetailsDto insertSalesDetails);
+
+
 
 }

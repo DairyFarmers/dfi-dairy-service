@@ -1,8 +1,8 @@
 package com.example.dairyinventoryservice.service.impl;
 
-import com.example.dairyinventoryservice.dao.PostPurchaseDetailsDao;
-import com.example.dairyinventoryservice.dto.request.*;
-import com.example.dairyinventoryservice.dto.response.GeneralResponse;
+import com.example.dairyinventoryservice.data.dao.PostPurchaseDetailsDao;
+import com.example.dairyinventoryservice.model.dto.request.*;
+import com.example.dairyinventoryservice.model.dto.response.GeneralResponse;
 import com.example.dairyinventoryservice.service.PostPurchaseDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

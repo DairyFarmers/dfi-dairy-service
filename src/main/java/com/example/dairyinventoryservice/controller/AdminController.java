@@ -1,7 +1,7 @@
 package com.example.dairyinventoryservice.controller;
 
-import com.example.dairyinventoryservice.dto.request.*;
-import com.example.dairyinventoryservice.dto.response.GeneralResponse;
+import com.example.dairyinventoryservice.model.dto.request.*;
+import com.example.dairyinventoryservice.model.dto.response.GeneralResponse;
 import com.example.dairyinventoryservice.service.GetPurchaseDetailsService;
 import com.example.dairyinventoryservice.service.PostPurchaseDetailsService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

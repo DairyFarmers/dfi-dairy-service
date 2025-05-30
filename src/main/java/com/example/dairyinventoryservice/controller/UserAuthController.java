@@ -1,12 +1,12 @@
 package com.example.dairyinventoryservice.controller;
 
-import com.example.dairyinventoryservice.dao.GetPurchaseDetailsDao;
-import com.example.dairyinventoryservice.dto.request.InsertUserDto;
-import com.example.dairyinventoryservice.dto.request.PasswordChangeDto;
-import com.example.dairyinventoryservice.dto.request.UserAuthRequestDto;
-import com.example.dairyinventoryservice.dto.response.AuthResponseDto;
-import com.example.dairyinventoryservice.dto.response.GeneralResponse;
-import com.example.dairyinventoryservice.dto.response.UserAuthResponseDto;
+import com.example.dairyinventoryservice.data.dao.GetPurchaseDetailsDao;
+import com.example.dairyinventoryservice.model.dto.request.InsertUserDto;
+import com.example.dairyinventoryservice.model.dto.request.PasswordChangeDto;
+import com.example.dairyinventoryservice.model.dto.request.UserAuthRequestDto;
+import com.example.dairyinventoryservice.model.dto.response.AuthResponseDto;
+import com.example.dairyinventoryservice.model.dto.response.GeneralResponse;
+import com.example.dairyinventoryservice.model.dto.response.UserAuthResponseDto;
 import com.example.dairyinventoryservice.service.UserAuthService;
 import com.example.dairyinventoryservice.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Slf4j
 @RestController
@@ -51,6 +53,14 @@ public class UserAuthController {
             AuthResponseDto authResponseDto = new AuthResponseDto();
             log.info(user.getEmail());
             String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
+
+//            Cookie cookie = new Cookie("token", token);
+//            cookie.setHttpOnly(true); // Prevent access via JavaScript
+//            cookie.setPath("/"); // Cookie is accessible for all endpoints
+//            cookie.setMaxAge(24 * 60 * 60); // 1 day expiry
+//
+//            response.addCookie(cookie);
+
             authResponseDto.setToken(token);
             authResponseDto.setRoleId(user.getRole());
             authResponseDto.setFullName(getPurchaseDetailsDao.getUserImportantDetails(user.getEmail()).getFullName());

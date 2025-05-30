@@ -1,7 +1,7 @@
 package com.example.dairyinventoryservice.config;
 
 import com.example.dairyinventoryservice.model.ChatMessageModel;
-import com.example.dairyinventoryservice.dto.ChatMessage;
+import com.example.dairyinventoryservice.model.dto.ChatMessage;
 import com.example.dairyinventoryservice.service.ChatMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,4 +49,5 @@ public class ChatController {
         @RequestParam String user2) {
         return chatMessageService.getChatHistory(user1, user2);
     }
+
 }

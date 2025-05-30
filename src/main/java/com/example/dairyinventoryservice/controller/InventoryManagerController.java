@@ -1,6 +1,6 @@
 package com.example.dairyinventoryservice.controller;
 
-import com.example.dairyinventoryservice.dto.response.GeneralResponse;
+import com.example.dairyinventoryservice.model.dto.response.GeneralResponse;
 import com.example.dairyinventoryservice.service.GetPurchaseDetailsService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
