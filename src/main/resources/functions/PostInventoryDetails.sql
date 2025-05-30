@@ -263,13 +263,9 @@ AS
         WHEN OTHERS THEN
             "rDataUpdated" := ''Issue In Inserting The Purchase Details'';
             RETURN QUERY SELECT "rDataUpdated";
-<<<<<<< HEAD
+
     END;
-=======
-END;
->>>>>>> f5600fd7a32d36c9528a514e095aa570c6f5e297
-'
-;
+';
 
 --To insert the User Role
 CREATE OR REPLACE FUNCTION insert_user_role(
@@ -310,8 +306,7 @@ AS
             "rDataUpdated" := ''Issue In Inserting The User Role'';
             RETURN QUERY SELECT "rDataUpdated";
     END;
-'
-;
+';
 
 -- Insert Item Details
 CREATE OR REPLACE FUNCTION insert_item_details(
