@@ -58,7 +58,7 @@ create or replace function bulk_request_form_b2b(puserdetailid integer, plocatio
     language plpgsql
 as
 '
-<<<<<<< HEAD
+
     DECLARE
 
         lUnitPriceForAItem                 Numeric(10, 2);
@@ -159,110 +159,7 @@ as
             END IF;
         END IF;
     END;
-=======
-DECLARE
-
-    lUnitPriceForAItem                 Numeric(10, 2);
-    lTotalItemCountForSpecificLocation BIGINT;
-    lTotalCountForEntireLocation       BIGINT;
-    lCreatedDateTime                   timestamp := current_timestamp;
-    lB2bRequestID                      int;
-    lUserDetailId                      INT;
-    lProcessingCount                   BIGINT;
-BEGIN
-
-    SELECT "MaxSellingUnitPriceForB2B"
-    into lUnitPriceForAItem
-    FROM "ItemsDetails"
-    WHERE "ItemId" = pItemId;
-
-
-    INSERT INTO "B2bRequestDetails"("CreatedOn", "B2bUserDetailId", "B2bLocationId", "ItemId", "ItemCount",
-                                    "UnitPriceForAItem", "RequestStatus", "CancelReason")
-    VALUES (lCreatedDateTime, pUserDetailId, pLocationId, pItemId, pItemCount, pUnitPriceForAItem, 7, null);
-
-    SELECT "B2bRequestId"
-    into lB2bRequestID
-    FROM "B2bRequestDetails"
-    where "CreatedOn" = lCreatedDateTime;
-
-
-
-    SELECT SUM("ItemCount")
-    into lProcessingCount
-    FROM "B2bRequestDetails"
-    WHERE "RequestStatus" in (1, 3)
-      AND "ItemId" = pItemId;
-
-    IF lProcessingCount IS NULL THEN
-        lProcessingCount := 0;
-    END IF;
-
-    -- Check for item price if less then status number 3 for that get item value
-    IF lUnitPriceForAItem >= pUnitPriceForAItem THEN
-        UPDATE "B2bRequestDetails"
-        SET "RequestStatus" = 2
-        WHERE "B2bRequestId" = lB2bRequestID;
-        RETURN QUERY SELECT NULL::INT,
-                            lB2bRequestID,
-                            2, NULL::BIGINT;
-        RETURN;
-    END IF;
-
-    -- Check for availability in same location
-    SELECT Sum("ItemCount"), "InsertedBy"
-    into lTotalItemCountForSpecificLocation,lUserDetailId
-    FROM "PurchaseDetails"
-    WHERE "ItemId" = pItemId
-      and "ExpiryDate"::DATE > "CreatedDate"::DATE
-      AND "InventoryLocationId" = pLocationId
-    GROUP BY "InsertedBy";
-
-    IF SUM(lTotalItemCountForSpecificLocation) >= (pItemCount + lProcessingCount) THEN
-        UPDATE "B2bRequestDetails"
-        SET "RequestStatus" = 1
-        WHERE "B2bRequestId" = lB2bRequestID;
-        PERFORM  insert_request_progress(lB2bRequestID, pItemCount, pItemCount);
-        return query SELECT lUserDetailId,
-                            lB2bRequestID,
-                            1,
-                            pItemCount;
-        RETURN;
-    ELSE
-        -- Check for availability around all location
-        SELECT Sum("ItemCount"),
-               "InsertedBy"
-        into lTotalCountForEntireLocation, lUserDetailId
-        FROM "PurchaseDetails"
-        WHERE "ItemId" = pItemId
-          and "ExpiryDate"::DATE > "CreatedDate"::DATE
-        GROUP BY "InsertedBy";
-        IF SUM(lTotalCountForEntireLocation)  >= (pItemCount + lProcessingCount) THEN
-            UPDATE "B2bRequestDetails"
-            SET "RequestStatus" = 3
-            WHERE "B2bRequestId" = lB2bRequestID;
-            PERFORM  insert_request_progress(lB2bRequestID, pItemCount, pItemCount);
-            RETURN QUERY SELECT lUserDetailId,
-                                lB2bRequestID,
-                                3,
-                                pItemCount;
-            RETURN;
-        ELSE
-            UPDATE "B2bRequestDetails"
-            SET "RequestStatus" = 7
-            WHERE "B2bRequestId" = lB2bRequestID;
-            PERFORM insert_request_progress(lB2bRequestID, pItemCount, pItemCount);
-            RETURN QUERY SELECT NULL::INT,
-                                lB2bRequestID,
-                                7,
-                                pItemCount;
-            RETURN;
-        END IF;
-    END IF;
-END;
->>>>>>> f5600fd7a32d36c9528a514e095aa570c6f5e297
 ';
-
 
 CREATE OR REPLACE FUNCTION insert_b2b_request(
     IN pSellerDetails INT,
@@ -347,9 +244,9 @@ AS
             rRequestProgressUpdated := ''No update'';
         END IF;
     END;
-<<<<<<< HEAD
-';
-=======
+
 ';
 
->>>>>>> f5600fd7a32d36c9528a514e095aa570c6f5e297
+
+
+
